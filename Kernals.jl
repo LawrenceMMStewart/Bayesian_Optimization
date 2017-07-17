@@ -55,6 +55,38 @@ end
 
 
 
+#matern_ker
+"""
+Compute the matern kernal, as described in A Tutorial on Bayesian 
+Optimization of Expensive Cost Functions, with Application to Active User Modeling and  Hierarchical Reinforcement 
+Learning Eric Brochu, Vlad M. Cora and Nando de Freitas December 14, 2010.
+
+
+Arguments
+---------
+x
+    First Argument 
+y
+    Second Argument 
+h
+    Hyper-parameter
+
+
+"""
+function matern_ker(x,y,h)
+    if size(x)!==size(y)
+        error("Error: Input vectors must have the same dimension and shape")
+    end
+
+    return ((0.5^(h-1))/(gamma(h)))*(2*sqrt(h)*sqrt(dot(x-y,x-y)))^h*besselj(h,2*sqrt(h)*sqrt(dot(x-y,x-y)))
+end
+
+
+
+
+
+
+
 #cov_gen.jl
 
 """
@@ -85,6 +117,7 @@ function cov_gen(ker,x,y)
     end
     return K
 end
+
 
 
 
