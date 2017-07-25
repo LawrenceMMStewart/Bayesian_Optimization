@@ -33,7 +33,7 @@ Compute the kernal, exponential squared (standard i.e. no parameters), as descri
 Optimization of Expensive Cost Functions, with Application to Active User Modeling and  Hierarchical Reinforcement 
 Learning Eric Brochu, Vlad M. Cora and Nando de Freitas December 14, 2010.
 
-The kernal can be expressed mathematically as k(x,y)=exp(-||x-y||^2)
+The kernal can be expressed mathematically as k(x,y)=exp(-1/2||x-y||^2)
 
 Arguments
 ---------
@@ -51,6 +51,42 @@ function std_exp_square_ker(x,y)
     end
     return exp(-0.5*(dot(x-y,x-y)))
 end
+
+
+
+
+
+#hyper_exp_square_ker
+
+
+"""
+Compute the kernal, exponential squared (with parameters), as described in A Tutorial on Bayesian 
+Optimization of Expensive Cost Functions, with Application to Active User Modeling and  Hierarchical Reinforcement 
+Learning Eric Brochu, Vlad M. Cora and Nando de Freitas December 14, 2010.
+
+The kernal can be expressed mathematically as k(x,y)=exp(-1/2(theta)||x-y||^2)
+
+Arguments
+---------
+x
+    First Argument 
+y
+    Second Argument 
+theta
+    Hyper-parameter
+
+"""
+
+function hyper_exp_square_ker(x,y,theta)
+    if size(x)!==size(y)
+        error("Error: Input vectors must have the same dimension and shape")
+    end
+    return exp(-0.5*(dot(x-y,x-y))/theta)
+end
+
+
+
+
 
 
 
@@ -77,6 +113,8 @@ function matern_ker(x,y,h)
     if size(x)!==size(y)
         error("Error: Input vectors must have the same dimension and shape")
     end
+
+    
 
     return ((0.5^(h-1))/(gamma(h)))*(2*sqrt(h)*sqrt(dot(x-y,x-y)))^h*besselj(h,2*sqrt(h)*sqrt(dot(x-y,x-y)))
 end
