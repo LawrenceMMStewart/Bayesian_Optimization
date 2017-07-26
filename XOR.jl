@@ -228,24 +228,22 @@ end
 
 
 
-#----------------------------- We can add tanh functions and hyperparemeters-----------#
+#----------------------------- We can add tanh functions and hyperparameters-----------#
 
 
+# #TEST RUN:---
 
-
-#Initialise Layers of Neuron Weights:
+# #Initialise Layers of Neuron Weights:
 
 
 Layer_1=uniform(0,1,2,2) #(In video above W1)
 Layer_2=uniform(0,1,2,1) #Column vector for the outer layer (in video above W2)
 
-#Initialise Learning Rate:
+# #Initialise Learning Rate:
 
-learning_rate1=0.1
-learning_rate2=0.01
-learning_rate3=0.4
-
-
+# learning_rate1=0.1
+# learning_rate2=0.01
+# # learning_rate3=0.4
 
 
 
@@ -254,21 +252,23 @@ learning_rate3=0.4
 
 
 
-w1, w2, MSE1 =Train_Neural_Net_Loop(100000,Layer_1,Layer_2,learning_rate1)
-x1, x2, MSE2 =Train_Neural_Net_Loop(100000,Layer_1,Layer_2,learning_rate2)
-z1, z2, MSE3=Train_Neural_Net_Loop(100000,Layer_1,Layer_2,learning_rate3)
+
+
+# # w1, w2, MSE1 =Train_Neural_Net_Loop(100000,Layer_1,Layer_2,learning_rate1)
+# x1, x2, MSE2 =Train_Neural_Net_Loop(1000000,Layer_1,Layer_2,learning_rate2)
+# # z1, z2, MSE3=Train_Neural_Net_Loop(100000,Layer_1,Layer_2,learning_rate3)
 
 
 
-print(string(MSE1,""),string(MSE2,""),string(MSE3,""))
+# print(string(MSE1,""),string(MSE2,""),string(MSE3,""))
 
 
 
 
-# #================================================================================================#
-# #If kernal has hyper-parameter: set it here and uncomment the curry function named ker:
-# # function c_ker(hyp,ker)
-# #     return ((x,y) -> ker(x,y,hyp))
-# # end
-# # new_kernal = c_ker(0.1,hyper_exp_square_ker)
+# # #================================================================================================#
+# # #If kernal has hyper-parameter: set it here and uncomment the curry function named ker:
+# # # function c_ker(hyp,ker)
+# # #     return ((x,y) -> ker(x,y,hyp))
+# # # end
+# # # new_kernal = c_ker(0.1,hyper_exp_square_ker)
 
