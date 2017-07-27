@@ -47,34 +47,14 @@ x
 
 #Later on we will add a hyperparemeter to this function:
 
-function sigmoid(x)
-    return 1/(1+exp(-x))
+function sigmoid(x,h,Deriv="off")
+    if Deriv=="off"
+        return 1/(1+exp(-h*x))
+    else
+        return (1/(1+exp(-h*x)))*(1-1/(1+exp(-h*x)))
     end
 
-
-
-
-
-
-#sigmoid_deriv.jl
-
-"""
-Return the derivative of the sigmoid of x:
-
-Arguments
----------
-x
-    input
-
-"""
-
-function sigmoid_deriv(x)
-    return 1/(1+exp(-x))*(1-1/(1+exp(-x)))
 end
-
-
-
-
 
 
 #Train_Neural_Net.jl
@@ -94,7 +74,7 @@ learning_rate
     Learning Rate for Gradient Descent
 """
 
-function Train_Neural_Net_Loop(epochs,Layer_1,Layer_2,learning_rate)
+function Train_Neural_Net_Loop(epochs,Layer_1,Layer_2,learning_rate,func_layer1,func_layer2)
 
     #Initialise XOR truth values:
     X=[ 0 0 ; 0 1 ; 1 0 ; 1 1] #When selected X[i,:] we have column vectors so need to transpose for matmult
@@ -104,8 +84,8 @@ function Train_Neural_Net_Loop(epochs,Layer_1,Layer_2,learning_rate)
 
     for i=1:epochs #For the weight matrix wij is the weight for input i going to Neuron j:
 
-        s_1=map(sigmoid,X*Layer_1) #Applies Sigmoid to X*Layer_1 the weighting matrix
-        s_2=map(sigmoid,s_1*Layer_2) #Applies Sigmoid to a2 * second weighting matrix
+        s_1=map(func_layer1,X*Layer_1) #Applies Sigmoid to X*Layer_1 the weighting matrix
+        s_2=map(func_layer2*Layer_2) #Applies Sigmoid to a2 * second weighting matrix
         direct_error=s_2-Y
         MSE=0.5*sum(direct_error.*direct_error) #element wise squares direct_error then summs up and divides by length
 
@@ -157,7 +137,7 @@ learning_rate
     Learning Rate for Gradient Descent
 """
 
-function Train_Neural_Net_MSE(MSE_Min,Layer_1,Layer_2,learning_rate)
+function Train_Neural_Net_MSE(MSE_Min,Layer_1,Layer_2,learning_ratefunc)
 
     #Initialise XOR truth values:
     X=[ 0 0 ; 0 1 ; 1 0 ; 1 1] #When selected X[i,:] we have column vectors so need to transpose for matmult
