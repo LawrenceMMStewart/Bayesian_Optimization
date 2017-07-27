@@ -156,7 +156,127 @@ function cov_gen(ker,x,y)
     return K
 end
 
+function catty(a,b)
+    return cat(1,a,b)
+end
 
+#comb.jl
+
+"""
+Given two arrays with single arrays inside generate the cartesian product set
+Coded by: Vandan Parmar
+Arguments
+---------
+
+a
+    array of array 1
+b
+    array of array 2
+
+"""
+
+function comb(a,b)
+
+
+    function op1(a,b)
+        return [a,b]
+    end
+
+    function op2(a,b)
+        return cat(1,[a],b)
+    end
+
+    function op3(a,b)
+        return cat(1,a,[b]) 
+    end
+
+    function op4(a,b)
+        return cat(1,a,b)
+    end
+    a=a[1]
+
+
+    #shout out to nando
+    b=b[1] #Set the array of arrays to be an array so Vandan does not commit at this current time
+ 
+    if (size(a[1])==())
+        if(size(b[1])==())
+            op_i = op1
+        else
+   
+            op_i = op2
+        end
+    else
+        if(size(b[1])==())
+            op_i = op3
+        else
+            op_i = op4
+        end
+    end
+
+    # print(cat(,map(y -> op_i(1,y),b)))
+    print("\n")
+    print("\n")
+    toReturn = []
+    map(x -> map(y -> push!(toReturn,op_i(x,y)),b), a)
+    # show(string(toReturn))
+
+    # toReturn = []
+
+    # for ai in a
+    #     for bj in b
+    #         push!(toReturn,op_i(ai,bj))
+    #         print(ai,"\r")
+    #     end
+    # end
+
+    return [toReturn]
+end
+
+
+
+
+
+#gen_points.jl
+
+"""
+Given an array of arrays where each array is the set of values each variable can take, for example 
+the first array may be learning rate (size 10), the second may be Hyper-parameter 1 size(1000), ect ect,
+the function gen_points will generate the set of all possible points considering a point in dimenstion R^n
+where n is the number of variables one uses.
+
+Arguments
+---------
+S
+    Array of all arrays containing variable values
+
+"""
+
+function gen_points(S)
+    print("gen_points")
+    if size(S)[1]==1
+        return S[1]
+    else
+        divider=convert(Int64,round( size(S)[1] /2) )    #Rounds up number of sets divided by two
+        
+        ar1=S[1:divider]
+        ar2=S[divider+1:end] #Splits S into two
+        
+        if size(ar2)[1]==1
+            if size(ar1)[1]==1
+                return comb(ar1,ar2)
+            else 
+                ar1=gen_points(ar1)
+                return comb(ar1,ar2)
+            end
+        else
+            ar1=gen_points(ar1)
+            ar2=gen_points(ar2)
+            return comb(ar1,ar2)
+            
+        end
+    end
+end
 
 
 
