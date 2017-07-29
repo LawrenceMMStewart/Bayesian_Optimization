@@ -42,19 +42,37 @@ Arguments
 ---------
 x
     input
+h
+    hyperparemeter
 
 """
 
-#Later on we will add a hyperparemeter to this function:
 
-function sigmoid(x,h,Deriv="off")
-    if Deriv=="off"
-        return 1/(1+exp(-h*x))
-    else
-        return (1/(1+exp(-h*x)))*(1-1/(1+exp(-h*x)))
-    end
-
+function sigmoid(x,h)
+    return 1/(1+exp(-h*x))
 end
+
+
+#sigmoid_deriv.jl
+
+"""
+Return the sigmoid of x:
+
+Arguments
+---------
+x
+    input
+h
+    hyperparemeter
+
+"""
+
+
+function sigmoid_deriv(x,h)
+    return (1/(1+exp(-h*x))*)(1-1/(1+exp(-h*x)))
+end
+
+
 
 
 #Train_Neural_Net.jl
@@ -74,7 +92,7 @@ learning_rate
     Learning Rate for Gradient Descent
 """
 
-function Train_Neural_Net_Loop(epochs,Layer_1,Layer_2,learning_rate,func_layer1,func_layer2)
+function Train_Neural_Net_Loop(epochs,Layer_1,Layer_2,learning_rate,node_function)
 
     #Initialise XOR truth values:
     X=[ 0 0 ; 0 1 ; 1 0 ; 1 1] #When selected X[i,:] we have column vectors so need to transpose for matmult
@@ -208,47 +226,19 @@ end
 
 
 
-#----------------------------- We can add tanh functions and hyperparameters-----------#
+#----------------------------- Multi-Dimensional Bayesian Optimization----------#
 
 
-# #TEST RUN:---
 
 # #Initialise Layers of Neuron Weights:
 
 
-# Layer_1=uniform(0,1,2,2) #(In video above W1)
-# Layer_2=uniform(0,1,2,1) #Column vector for the outer layer (in video above W2)
-
-# # #Initialise Learning Rate:
-
-# # learning_rate1=0.1
-# # learning_rate2=0.01
-# # # learning_rate3=0.4
+Layer_1=uniform(0,1,2,2) #(In video above W1)
+Layer_2=uniform(0,1,2,1) #Column vector for the outer layer (in video above W2)
 
 
 
 
+LR_Test=linspace(a,b,1000) #These are the learning rates we can choose
 
-
-
-
-
-
-# # w1, w2, MSE1 =Train_Neural_Net_Loop(100000,Layer_1,Layer_2,learning_rate1)
-# x1, x2, MSE2 =Train_Neural_Net_Loop(1000000,Layer_1,Layer_2,learning_rate2)
-# # z1, z2, MSE3=Train_Neural_Net_Loop(100000,Layer_1,Layer_2,learning_rate3)
-
-
-
-# print(string(MSE1,""),string(MSE2,""),string(MSE3,""))
-
-
-
-
-# # #================================================================================================#
-# # #If kernal has hyper-parameter: set it here and uncomment the curry function named ker:
-# # # function c_ker(hyp,ker)
-# # #     return ((x,y) -> ker(x,y,hyp))
-# # # end
-# # # new_kernal = c_ker(0.1,hyper_exp_square_ker)
 

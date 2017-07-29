@@ -36,4 +36,19 @@ function gaussian_process(ker,D,noise,xrange)
 end
     
     
+#Another temporary one:
+
+function gaussian_process2(ker,D,noise,xrange)
+    K_ss=cov_gen2(ker,xrange,xrange)+eye(length(xrange))*noise
+    y=map(x->x[2],D)   # these are our y noisy functions
+    x=map(x->x[1],D) #These are our x training points
+    K = cov_gen2(ker,x,x)+noise*eye(length(x))
+    K_s=cov_gen2(ker,x,xrange)  #K_s is as in nandos code but in the paper called little k
+    Inv_K=inv(K)  
+    µ=transpose(K_s)*Inv_K*y
+    sigma2=diag(K_ss-transpose(K_s)*Inv_K*K_s)  
+    sigma=sqrt(sigma2) 
+    return (µ,sigma,D)
+end
+    
     

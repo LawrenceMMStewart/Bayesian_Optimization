@@ -156,15 +156,33 @@ function cov_gen(ker,x,y)
     return K
 end
 
-function catty(a,b)
-    return cat(1,a,b)
+
+
+#Second one here need to format and look nice;
+function cov_gen2(ker,x,y)
+    K=zeros(size(x)[1],size(y)[1])
+    
+    #loop through values and update
+    for i=1:size(x)[1]
+        for j=1:size(y)[1]
+            K[i,j]=ker(x[i],y[j])   #Note for some reason here the way we have set up K means K[1][2] does 
+                                        #not work. We need to use K[1,2]. 
+            end
+    end
+    return K
 end
+
+
+
+
+
+
 
 #comb.jl
 
 """
 Given two arrays with single arrays inside generate the cartesian product set
-Coded by: Vandan Parmar
+Credit to: Vandan Parmar
 Arguments
 ---------
 
@@ -232,6 +250,8 @@ function comb(a,b)
 
     return [toReturn]
 end
+
+
 
 
 
