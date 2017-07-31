@@ -102,5 +102,29 @@ HP_Test=linspace(c,d,1000)
 Test=gen_points([LR_Test,HP_Test])[1]
 
 
+# K=cov_gen(std_exp_square_ker,Test,Test)+eye(length(Test))*1e-6 #probably wont need this:
+
+
+#We first have to pick a random point to begin bayesian optimization:
+
+#currently starts with the midpoint, possibly randomise this:
+Bayesian_Points=[Test[Int(round(length(Test)/2))]]
+
+
+
+#Bayesian_Points is an vector of arrays where in each array first entry is LR second entry is Hyper-Parameters:
+
+
+#Define hyperparemeter function:
+node_function=hyper_curry(Bayesian_Points[1][2])
+node_deriv=hyper_curry_deriv(Bayesian_Points[1][2])
+learning_rate=Bayesian_Points[1][1]
+
+
+Bayesian_MSE=[Train_Neural_Net_Loop(epochs,Layer_1,Layer_2,learning_rate,node_function,node_deriv)[3]]
+
+
+
+
 
 
