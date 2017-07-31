@@ -69,7 +69,7 @@ h
 
 
 function sigmoid_deriv(x,h)
-    return (1/(1+exp(-h*x))*)(1-1/(1+exp(-h*x)))
+    return (1/(1+exp(-h*x)))*(1-1/(1+exp(-h*x)))
 end
 
 
@@ -92,7 +92,7 @@ learning_rate
     Learning Rate for Gradient Descent
 """
 
-function Train_Neural_Net_Loop(epochs,Layer_1,Layer_2,learning_rate,node_function)
+function Train_Neural_Net_Loop(epochs,Layer_1,Layer_2,learning_rate,node_function,node_deriv)
 
     #Initialise XOR truth values:
     X=[ 0 0 ; 0 1 ; 1 0 ; 1 1] #When selected X[i,:] we have column vectors so need to transpose for matmult
@@ -102,17 +102,17 @@ function Train_Neural_Net_Loop(epochs,Layer_1,Layer_2,learning_rate,node_functio
 
     for i=1:epochs #For the weight matrix wij is the weight for input i going to Neuron j:
 
-        s_1=map(func_layer1,X*Layer_1) #Applies Sigmoid to X*Layer_1 the weighting matrix
-        s_2=map(func_layer2*Layer_2) #Applies Sigmoid to a2 * second weighting matrix
+        s_1=map(node_function,X*Layer_1) #Applies Sigmoid to X*Layer_1 the weighting matrix
+        s_2=map(node_function, s_1*Layer_2) #Applies Sigmoid to a2 * second weighting matrix
         direct_error=s_2-Y
         MSE=0.5*sum(direct_error.*direct_error) #element wise squares direct_error then summs up and divides by length
 
 
     #Begin updating: 
-    delta_outer=-1.0*direct_error.*map(sigmoid_deriv,s_1*Layer_2) #this is the delta (which is the raw loss element-wise
+    delta_outer=-1.0*direct_error.*map(node_deriv,s_1*Layer_2) #this is the delta (which is the raw loss element-wise
                                                         #multiplied by z(3) see explanation in readme 
                                                         
-    delta_inner=delta_outer*transpose(Layer_2).*map(sigmoid_deriv,X*Layer_1)  
+    delta_inner=delta_outer*transpose(Layer_2).*map(node_deriv,X*Layer_1)  
     # map(sigmoid_deriv,X*Layer_1) is f'(z2)
 
 
@@ -155,7 +155,7 @@ learning_rate
     Learning Rate for Gradient Descent
 """
 
-function Train_Neural_Net_MSE(MSE_Min,Layer_1,Layer_2,learning_ratefunc)
+function Train_Neural_Net_MSE(MSE_Min,Layer_1,Layer_2,learning_rate,node_function,node_deriv)
 
     #Initialise XOR truth values:
     X=[ 0 0 ; 0 1 ; 1 0 ; 1 1] #When selected X[i,:] we have column vectors so need to transpose for matmult
@@ -165,17 +165,17 @@ function Train_Neural_Net_MSE(MSE_Min,Layer_1,Layer_2,learning_ratefunc)
 
     while MSE>=MSE_Min #For the weight matrix wij is the weight for input i going to Neuron j:
 
-        s_1=map(sigmoid,X*Layer_1) #Applies Sigmoid to X*Layer_1 the weighting matrix
-        s_2=map(sigmoid,s_1*Layer_2) #Applies Sigmoid to a2 * second weighting matrix
+        s_1=map(node_function,X*Layer_1) #Applies Sigmoid to X*Layer_1 the weighting matrix
+        s_2=map(node_function, s_1*Layer_2) #Applies Sigmoid to a2 * second weighting matrix
         direct_error=s_2-Y
         MSE=0.5*sum(direct_error.*direct_error) #element wise squares direct_error then summs up and divides by length
 
 
     #Begin updating: 
-    delta_outer=-1.0*direct_error.*map(sigmoid_deriv,s_1*Layer_2) #this is the delta (which is the raw loss element-wise
+    delta_outer=-1.0*direct_error.*map(node_deriv,s_1*Layer_2) #this is the delta (which is the raw loss element-wise
                                                         #multiplied by z(3) see explanation in readme 
                                                         
-    delta_inner=delta_outer*transpose(Layer_2).*map(sigmoid_deriv,X*Layer_1)  
+    delta_inner=delta_outer*transpose(Layer_2).*map(node_deriv,X*Layer_1)  
     # map(sigmoid_deriv,X*Layer_1) is f'(z2)
 
 
@@ -216,29 +216,42 @@ w2
 
 """
 
-function XOR_Net(M,w1,w2)
+function XOR_Net(M,w1,w2,node_function)
     #Where M is a matrix that 
-    s_1=map(sigmoid,M*w1) #Applies Sigmoid to X*Layer_1 the weighting matrix
-    s_2=map(sigmoid,s_1*w2)
+    s_1=map(node_function,M*w1) #Applies Sigmoid to X*Layer_1 the weighting matrix
+    s_2=map(node_function,s_1*w2)
     return s_2
 
 end
 
 
 
-#----------------------------- Multi-Dimensional Bayesian Optimization----------#
+#-----------------------------Training Example--------------------------------#
 
 
 
 # #Initialise Layers of Neuron Weights:
 
 
-Layer_1=uniform(0,1,2,2) #(In video above W1)
-Layer_2=uniform(0,1,2,1) #Column vector for the outer layer (in video above W2)
+# Layer_1=uniform(0,1,2,2) #(In video above W1)
+# Layer_2=uniform(0,1,2,1) #Column vector for the outer layer (in video above W2)
 
 
 
 
-LR_Test=linspace(a,b,1000) #These are the learning rates we can choose
 
 
+# function hyper_curry(h)
+#     return (x->sigmoid(x,h))
+# end
+
+# function hyper_curry_deriv(h)
+#     return (x->sigmoid_deriv(x,h))
+# end
+
+# node_function=hyper_curry(1)
+# node_deriv=hyper_curry_deriv(1)
+
+# w1, w2, MSE1 =Train_Neural_Net_Loop(1000000,Layer_1,Layer_2,0.01,node_function,node_deriv)
+
+# print(XOR_Net([0 1],w1,w2,node_function))

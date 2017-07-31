@@ -15,7 +15,21 @@ Ytest=linspace(-pi,pi,100)
 Test=gen_points([Xtest,Ytest])[1]
 sin_test = map(i -> sin(i[1]+i[2]),Test)
 
+
+#for plotting:
+
+cix=map(x->x[1],Test)
+ciy=map(x->x[2],Test)
+
 N=40
+
+
+
+
+
+
+
+
 
 Xsample=uniform(-pi,pi,N,1) #if uniform need to add (,1) to specify dimension
 Ysample=uniform(-pi,pi,N,1)
@@ -59,20 +73,34 @@ x=map(x->x[1],D); #These are our x training points (dont forget they come as arr
 x1=map(p->p[1],x)
 x2=map(p->p[2],x)
 
+
+
+
+
+
+
+
+
+
+
+
+
 using PyPlot
 # fig = figure("pyplot_plot",figsize=(5,5))
 # ax = axes()
-#NO FILL BETWEEN EXISTS FOR 3d
-# surf(x1,x2,2*y,color="#E4B5F1",alpha=0.2)
-# surf(x1,x2,y,color="#19F0E9",alpha=0.9)
-# surf(Xsample,Ysample,mu+2*sigma,alpha=0.2)
+
+
+surf(x1,x2,y,alpha=0.8)
+# surf(cix,ciy,sin_test,alpha=0.5)
+surf(cix,ciy,mu+2*sigma,alpha=0.3) #CI intervals:
+surf(cix,ciy,mu-2*sigma,alpha=0.3) #CI intervals:
+
 
 title("Gaussian Process Sin(x+y)") 
 # ylabel("f(x)")
 # xlabel("x")
 grid("off")
 show()
-
 
 
 

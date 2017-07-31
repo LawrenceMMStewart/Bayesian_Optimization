@@ -64,7 +64,6 @@ Bayesian_MSE=[Train_Neural_Net_Loop(epochs,Layer_1,Layer_2,Bayesian_Learning_Rat
 
 
 
-#All good up to here, delete me:
 
 mu=zeros(size(LR_Test))
 sigma=zeros(size(LR_Test))
