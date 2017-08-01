@@ -23,7 +23,7 @@ Layer_1=uniform(0,1,2,2)
 
 Layer_2=uniform(0,1,2,1) 
 
-epochs=10000   #1000
+epochs=1000   #1000
 a=0.001  #Change to 0.001
 b=1
 
@@ -155,7 +155,7 @@ for k=2:N
         Bayesian_MSE=cat(1,Bayesian_MSE,[value_to_be_appended])
         println("Epoch Complete")
     else
-        println("Found Optimum on the ", k-1, "of ", N, "iterations")
+        println("Found Optimum on the ", k-1, " iteration of ", N, " iterations")
         Bayesian_Points=Bayesian_Points[1:length(Bayesian_Points)-1]
         break
     end
@@ -168,21 +168,9 @@ end
 
 
 
-# using PyPlot
-# # fig = figure("pyplot_subplot_mixed",figsize=(7,7))
-# ax=axes()
-LR=[x->x[1] for x=1:length(Bayesian_Points)]
-HP=[x->x[2] for x=1:length(Bayesian_Points)]
-# surf(LR,HP,Bayesian_MSE,alpha=0.7)
-# title("MSE Plot for Optimized Sigmoid Hyper-Parameters and Learning Rates")
-# xlabel("Learning Rates")
-# ylabel("Hyper-Parameters")
-# zlabel("Mean Square Error")
-# grid("on")
-# show()
-println(size(LR))
-println(size(HP))
-println(size(Bayesian_MSE))
+
+LR=[Bayesian_Points[i][1] for i=1:length(Bayesian_Points)]
+HP=[Bayesian_Points[i][2] for i=1:length(Bayesian_Points)]
 
 
 
@@ -191,6 +179,24 @@ println(size(Bayesian_MSE))
 println("Bayesian_Learning_Rates Training Complete")
 println("The minimum MSE by Bayesian Optimization was", minimum(Bayesian_MSE))
 println("The minnmum MSE by Random Selection was", minimum(Random_MSE))
+
+using PyPlot
+# fig = figure("pyplot_subplot_mixed",figsize=(7,7))
+# ax=axes()
+surf(LR,HP,Bayesian_MSE)
+
+title("MSE Plot for Optimized Sigmoid Hyper-Parameters and Learning Rates")
+xlabel("Learning Rates")
+ylabel("Hyper-Parameters")
+zlabel("Mean Square Error")
+
+grid("off")
+show()
+
+
+
+
+
 
 
 
