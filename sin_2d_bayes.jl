@@ -88,8 +88,6 @@ x2=map(p->p[2],x)
 using PyPlot
 # fig = figure("pyplot_plot",figsize=(5,5))
 # ax = axes()
-
-
 surf(x1,x2,y,alpha=0.8)
 # surf(cix,ciy,sin_test,alpha=0.5)
 surf(cix,ciy,mu+2*sigma,alpha=0.3) #CI intervals:

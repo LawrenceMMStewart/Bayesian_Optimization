@@ -23,14 +23,14 @@ Layer_1=uniform(0,1,2,2)
 
 Layer_2=uniform(0,1,2,1) 
 
-epochs=1000   #1000
+epochs=1000   # was 1000 below, please change back
 a=0.001  #Change to 0.001
 b=1
 
 c=0.001
 d=1
 
-N=20   #change to 25
+N=20   
 
 #Curry the sigmoid functions:
 
@@ -133,10 +133,10 @@ for k=2:N
     mu, sigma, D=gaussian_process(std_exp_square_ker,D,1e-6,Test)
     println("Gaussian Process Complete","\r")
     mu=reshape(mu,length(mu));
-    sigma=reshape(sigma,length(sigma));
+    sigma=reshape(sigma,length(sigma))
 
-    new_point=findmin(mu-0.25*sigma)[2]
 
+    new_point=findmin(mu-sigma)[2]
 
     #Here we will need to change the number 2 to k 
     Bayesian_Points=cat(1,Bayesian_Points,[Test[new_point]])
@@ -193,6 +193,17 @@ zlabel("Mean Square Error")
 grid("off")
 show()
 
+
+
+
+
+
+
+
+
+
+
+
 """
 ============================================== Results ==========================================
 
@@ -238,3 +249,49 @@ The minnmum MSE by Random Selection was0.2931509389546021
 Shows the exploitation of the network (µ(x)) vs the exploration (sig(x)) does not 
 really matter in terms of the final MSE however the smaller a found it in less.
 """
+
+
+#a few other tests mnay or may not be of use:
+
+
+
+
+
+
+
+
+
+
+
+#This part is probably pretty pointless...
+
+
+
+"""
+
+We let the learning rate and hyper-parameter be between 0.001 and 1 and then we let the utlilty
+funciton be µ+sig a and we vary the epochs:
+
+=====================================================================================
+epochs=100
+
+
+The minimum MSE by Bayesian Optimization was0.49988990389321153
+The minnmum MSE by Random Selection was0.49998255640113864
+
+
+==================================================================================
+epochs=1000
+
+Found Optimum on the 6 iteration of 20 iterations
+The minimum MSE by Bayesian Optimization was0.1766613895128894
+The minnmum MSE by Random Selection was0.2931509389546021
+
+=====================================================================================
+
+epochs=10000
+
+Found Optimum on the 13 iteration of 20 iterations
+The minimum MSE by Bayesian Optimization was0.009528558587888813
+The minnmum MSE by Random Selection was0.013710474738066445
+
