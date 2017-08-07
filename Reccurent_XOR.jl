@@ -119,7 +119,7 @@ end
 
 # Here we will create the reccurent neural network:
 
-Layer_1=uniform(0,1,1,2) #Could be the other way round also could set them to 0.5 instead
+Layer_1=uniform(0,1,1,2) 
 Layer_2=uniform(0,1,2,1)
 recurrent_layer=uniform(0,1,2,2)
 
@@ -128,20 +128,6 @@ recurrent_layer=uniform(0,1,2,2)
 Seq_Len=100
 
 
-function hyper_curry(h)
-    return (x->sigmoid(x,h))
-end
-
-function hyper_curry_deriv(h)
-    return (x->sigmoid_deriv(x,h))
-end
-
-node_function=hyper_curry(1)
-node_deriv=hyper_curry_deriv(1)
-
-
-epochs=100
-learning_rate=0.01  
 
 function Train_Reccurent_Net_Loop(epochs,Layer_1,Layer_2,recurrent_layer,learning_rate,node_function,node_deriv,Seq_Len)
     
@@ -169,17 +155,6 @@ function Train_Reccurent_Net_Loop(epochs,Layer_1,Layer_2,recurrent_layer,learnin
             # end
 
             #Begin backpropagation
-
-
-            """
-            Add a counter that adds up all the errors on the XOR/3rd terms
-            for each epoch by setting a threshold for 0, 1 and the seeing
-            if errors decrease as we move onwards.
-
-            Also add a counter for overall errors and see about that just for 
-            curiosity (but delete after)
-
-            """
 
             delta_outer=-1.0*direct_error.*map(node_deriv,a_2*Layer_2)
             delta_inner=delta_outer*transpose(Layer_2).*map(node_deriv,[seq[i]]*Layer_1)
@@ -214,28 +189,174 @@ end
 
 
 
-P=Train_Reccurent_Net_Loop(epochs,Layer_1,Layer_2,recurrent_layer,learning_rate,node_function,node_deriv,Seq_Len)
-y0=P[1]
-yend=P[2]
+
+
+#Test 1 ======================================================================================================
+
+#Here we run a temporal XOR example to show how the reccurent net learns with time:
+
+##Run
+
+
+# function hyper_curry(h)
+#     return (x->sigmoid(x,h))
+# end
+
+# function hyper_curry_deriv(h)
+#     return (x->sigmoid_deriv(x,h))
+# end
+
+# node_function=hyper_curry(1)
+# node_deriv=hyper_curry_deriv(1)
+
+# epochs=100
+# learning_rate=0.01  
 
 
 
-xvals=[i for i=1:length(y0)]
+# P=Train_Reccurent_Net_Loop(epochs,Layer_1,Layer_2,recurrent_layer,learning_rate,node_function,node_deriv,Seq_Len)
+# y0=P[1]
+# yend=P[2]
+# xvals=[i for i=1:length(y0)]
 
 
 
-using PyPlot
+# using PyPlot
 
-plot(xvals,y0,label="SE of First Epoch",alpha=0.4)
-plot(xvals,yend,label="SE of Last Epoch",alpha=0.9)
-title("SE Plot For Each Term in XOR Sequence ")
-xlabel(L"$n$")
-ylabel(L"${XOR}_n$")
-legend(loc="upper right",fancybox="true")
-axis("tight")
-grid("off")
-show()
+# plot(xvals,y0,label="SE of First Epoch",alpha=0.4)
+# plot(xvals,yend,label="SE of Last Epoch",alpha=0.9)
+# title("SE Plot For Each Term in XOR Sequence ")
+# xlabel(L"$n$")
+# ylabel(L"${XOR}_n$")
+# legend(loc="upper right",fancybox="true")
+# axis("tight")
+# grid("off")
+# show()
+
+##End run
+
+# ========================================================================================================
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#For some reason this code shows that thresholding does nothing, same error each time, which 
+#is the seed area. Think about for a while then if no idea delete this 
+
+
+# function Train_Reccurent_Net_Loop_Threshold(epochs,Layer_1,Layer_2,recurrent_layer,learning_rate,node_function,node_deriv,Seq_Len)
+    
+
+#     #We assume trivially by definition the threshold value of 0.5
+#     seq=XOR_Sequence(Seq_Len)
+#     context_units_out=transpose([0.5, 0.5]) #Pre-intialise the first output for the context units:
+        
+    
+#     SE=0
+#     thres=0
+
+#     Errors=zeros(epochs)
+#     epoch_error=0
+    
+#     for k=1:epochs
+#         epoch_error=0
+#         for i=1:length(seq)-3
+            
+#             a_2=map(node_function,[seq[i]]*Layer_1+context_units_out*recurrent_layer)
+#             a_3=map(node_function,a_2*Layer_2)
+#             direct_error=a_3-seq[i+1]
+
+#             #See whether the direct_error is within 0.5 (as we round up or down wrt threshold)
+#             if direct_error[1]>=0.5
+#                 epoch_error+=1
+#                 println(string("Error on position ",i))
+#             end
+
+
+            
+#             SE=0.5*sum(direct_error.*direct_error)
+#             context_units_out=map(node_function,a_2*ones(2,2))
+
+
+#             #Begin backpropagation
+
+
+
+#             delta_outer=-1.0*direct_error.*map(node_deriv,a_2*Layer_2)
+#             delta_inner=delta_outer*transpose(Layer_2).*map(node_deriv,[seq[i]]*Layer_1)
+
+
+#             Layer_2 +=learning_rate*transpose(a_2)*delta_outer
+#             Layer_1 +=learning_rate*transpose([seq[i]])*delta_inner
+
+            
+#             recurrent_layer +=transpose(context_units_out)*delta_outer*transpose(Layer_2).*map(node_deriv,context_units_out*recurrent_layer)
+
+
+        
+
+
+#         end
+#         println(string("Square Error = ",SE,"\r"))
+#         Errors[k]=epoch_error
+#     end
+#     return Errors
+# end
+
+
+
+# print(Train_Reccurent_Net_Loop_Threshold(epochs,Layer_1,Layer_2,recurrent_layer,learning_rate,node_function,node_deriv,Seq_Len))
+
+
+
+#Here we will add a threshold value to see  how the errors change as the network develops:
+
+#We will take the threshold value to be 0.5:
 
 
