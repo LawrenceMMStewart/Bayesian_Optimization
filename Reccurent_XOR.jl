@@ -125,7 +125,7 @@ recurrent_layer=uniform(0,1,2,2)
 
 
 
-Seq_Len=3000
+Seq_Len=100
 
 
 function hyper_curry(h)
@@ -140,51 +140,73 @@ node_function=hyper_curry(1)
 node_deriv=hyper_curry_deriv(1)
 
 
+epochs=100
+learning_rate=0.01  
 
-seq=XOR_Sequence(Seq_Len)
-context_units_out=transpose([0.5, 0.5]) #Preintiliase the first output for the context units:
-learning_rate=0.01      
-epochs=1000
-SE=0
-for k=1:epochs
-    for i=1:length(seq)-3
-
-        a_2=map(node_function,[seq[i]]*Layer_1+context_units_out*recurrent_layer)
-        a_3=map(node_function,a_2*Layer_2)
-        direct_error=a_3-seq[i+1]
-        SE=0.5*sum(direct_error.*direct_error)
-        context_units_out=map(node_function,a_2*ones(2,2))
-
-        #This is the foward pass for an individual point
-        # if i%3==0
-        #     println(string("Square Error = ",SE,"\r"))
-        # end
-
-        #Begin backpropagation
-
-
-        """
-        Add a counter that adds up all the errors on the XOR/3rd terms
-        for each epoch by setting a threshold for 0, 1 and the seeing
-        if errors decrease as we move onwards.
-
-        Also add a counter for overall errors and see about that just for 
-        curiosity (but delete after)
-
-        """
-
-        delta_outer=-1.0*direct_error.*map(node_deriv,a_2*Layer_2)
-        delta_inner=delta_outer*transpose(Layer_2).*map(node_deriv,[seq[i]]*Layer_1)
-
-
-        Layer_2 +=learning_rate*transpose(a_2)*delta_outer
-        Layer_1 +=learning_rate*transpose([seq[i]])*delta_inner
-
+function Train_Reccurent_Net_Loop(epochs,Layer_1,Layer_2,recurrent_layer,learning_rate,node_function,node_deriv,Seq_Len)
+    
+    seq=XOR_Sequence(Seq_Len)
+    context_units_out=transpose([0.5, 0.5]) #Pre-intialise the first output for the context units:
         
-        recurrent_layer +=transpose(context_units_out)*delta_outer*transpose(Layer_2).*map(node_deriv,context_units_out*recurrent_layer)
+    
+    SE=0
 
+    Starting_Square_Error=zeros(Seq_Len-3)
+    Final_Square_Error=zeros(Seq_Len-3)
+    
+    for k=1:epochs
+        for i=1:length(seq)-3
+
+            a_2=map(node_function,[seq[i]]*Layer_1+context_units_out*recurrent_layer)
+            a_3=map(node_function,a_2*Layer_2)
+            direct_error=a_3-seq[i+1]
+            SE=0.5*sum(direct_error.*direct_error)
+            context_units_out=map(node_function,a_2*ones(2,2))
+
+            #This is the foward pass for an individual point
+            # if i%3==0
+            #     println(string("Square Error = ",SE,"\r"))
+            # end
+
+            #Begin backpropagation
+
+
+            """
+            Add a counter that adds up all the errors on the XOR/3rd terms
+            for each epoch by setting a threshold for 0, 1 and the seeing
+            if errors decrease as we move onwards.
+
+            Also add a counter for overall errors and see about that just for 
+            curiosity (but delete after)
+
+            """
+
+            delta_outer=-1.0*direct_error.*map(node_deriv,a_2*Layer_2)
+            delta_inner=delta_outer*transpose(Layer_2).*map(node_deriv,[seq[i]]*Layer_1)
+
+
+            Layer_2 +=learning_rate*transpose(a_2)*delta_outer
+            Layer_1 +=learning_rate*transpose([seq[i]])*delta_inner
+
+            
+            recurrent_layer +=transpose(context_units_out)*delta_outer*transpose(Layer_2).*map(node_deriv,context_units_out*recurrent_layer)
+
+
+            if k==1
+                Starting_Square_Error[i]=SE
+            end
+
+
+            if k==epochs
+                Final_Square_Error[i]=SE
+            end
+        
+
+
+        end
+        println(string("Square Error = ",SE,"\r"))
     end
-    println(string("Square Error = ",SE,"\r"))
+    return [Starting_Square_Error, Final_Square_Error]
 end
 
 
@@ -192,19 +214,28 @@ end
 
 
 
-
-
-# function Train_Reccurent_Net_Loop(epochs,Layer_1,Layer_2,recurrent_layer,learning_rate,node_function,node_deriv,Seq_Len)
-    
-#     seq=XOR_Sequence(Seq_Len)
-#     context_units_out=[0.5, 0.5] #Preintiliase the first output for the context units:
+P=Train_Reccurent_Net_Loop(epochs,Layer_1,Layer_2,recurrent_layer,learning_rate,node_function,node_deriv,Seq_Len)
+y0=P[1]
+yend=P[2]
 
 
 
-#     for i=1:length(seq)-3
+xvals=[i for i=1:length(y0)]
 
-#         a_2=map(node_function,[seq[i]]*Layer_1+context_units_out*recurrent_layer)
-#         a_3=map(node_function,a_2*Layer_2)
-#         direct_error=a_3-seq[i+1]
-#         SE=0.5*sum(direct_error.*direct_error)
-# end
+
+
+using PyPlot
+
+plot(xvals,y0,label="SE of First Epoch",alpha=0.4)
+plot(xvals,yend,label="SE of Last Epoch",alpha=0.9)
+title("SE Plot For Each Term in XOR Sequence ")
+xlabel(L"$n$")
+ylabel(L"${XOR}_n$")
+legend(loc="upper right",fancybox="true")
+axis("tight")
+grid("off")
+show()
+
+
+
+

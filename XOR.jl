@@ -172,7 +172,7 @@ function Train_Neural_Net_MSE(MSE_Min,Layer_1,Layer_2,learning_rate)
         direct_error=s_2-Y
         MSE=0.5*sum(direct_error.*direct_error) #element wise squares direct_error then summs up and divides by length
 
-
+#This is not actually MSE it is the square error
     #Begin updating: 
     delta_outer=-1.0*direct_error.*map(sigmoid_deriv,s_1*Layer_2) #this is the delta (which is the raw loss element-wise
                                                         #multiplied by z(3) see explanation in readme 
