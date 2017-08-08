@@ -15,7 +15,7 @@ Layer_2=uniform(0,1,2,1)
 recurrent_layer=uniform(0,1,2,2)
 
 Seq_Len=100
-epochs=100
+epochs=100 #100 was good before
 
 
 function hyper_curry(h)
@@ -36,7 +36,7 @@ a=0.001  #Change to 0.001
 b=1
 c=0.001
 d=1
-N=20  
+N=15 #10 does well
 
 
 Random_Learning_Rates=uniform(a,b,N,1)
@@ -90,9 +90,10 @@ show()
 #Bayesian Optimization Example===================================================
 
 #Here are the points we can pick from in the Optimization
+number_of_points=100 # at 75 was 0.12035 vs 0.11
 
-LR_Test=linspace(a,b,100)
-HP_Test=linspace(c,d,100)
+LR_Test=linspace(a,b,number_of_points)
+HP_Test=linspace(c,d,number_of_points)
 
 #Here is the carteisan product of these written as a vector
 Test=gen_points([LR_Test,HP_Test])[1]
@@ -120,6 +121,9 @@ P=Train_Reccurent_Net_Loop(epochs,Layer_1,Layer_2,recurrent_layer,learning_rate,
 Bayesian_Temporal_Means=[(1/length(P[2]))*sum(P[2])]
 
 
+
+mu=zeros(number_of_points)
+sigma=zeros(number_of_points)
 #Begin Bayesian Optimization:
 
 for k=2:N
@@ -148,7 +152,7 @@ for k=2:N
 
     if value_to_be_appended !=Bayesian_Temporal_Means[k-1]
         Bayesian_Temporal_Means=cat(1,Bayesian_Temporal_Means,[value_to_be_appended])
-        println("Epoch Complete")
+        println("Epoch ", k, " Complete")
     else
         println("Found Optimum on the ", k-1, " iteration of ", N, " iterations")
         Bayesian_Points=Bayesian_Points[1:length(Bayesian_Points)-1]
@@ -172,12 +176,16 @@ HP=[Bayesian_Points[i][2] for i=1:length(Bayesian_Points)]
 
 
 #Move this to the bottom
+println("Minimum Average Square Error for Random Selection = ", minimum(Random_Average_of_Temporal_Square_Errors))
+println("Minimum Average Square Error for Bayesian Optimization = ", minimum(Bayesian_Temporal_Means))
 
 
 using PyPlot
 # fig = figure("pyplot_subplot_mixed",figsize=(7,7))
 # ax=axes()
 surf(LR,HP,Bayesian_Temporal_Means,alpha=0.7)
+surf(LR,HP,mu+sigma,alpha=0.3)
+surf(LR,HP,mu-sigma,alpha=0.3)
 
 title("Average Temporal SE Plot for Optimized Sigmoid Hyper-Parameters and Learning Rates")
 xlabel("Learning Rates")
@@ -189,5 +197,13 @@ show()
 
 
 
-println("Minimum Average Square Error for Random Selection = ", minimum(Random_Average_of_Temporal_Square_Errors))
-println("Minimum Average Square Error for Bayesian Optimization = ", minimum(Bayesian_Temporal_Means))
+
+
+
+"""
+currently on:
+Minimum Average Square Error for Random Selection = 0.11421788795928434
+Minimum Average Square Error for Bayesian Optimization = 0.1081628656136723
+
+
+"""

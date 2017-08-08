@@ -135,7 +135,7 @@ function Train_Reccurent_Net_Loop(epochs,Layer_1,Layer_2,recurrent_layer,learnin
     context_units_out=transpose([0.5, 0.5]) #Pre-intialise the first output for the context units:
         
     
-    SE=0
+    MSE=0
 
     Starting_Square_Error=zeros(Seq_Len-3)
     Final_Square_Error=zeros(Seq_Len-3)
@@ -146,7 +146,7 @@ function Train_Reccurent_Net_Loop(epochs,Layer_1,Layer_2,recurrent_layer,learnin
             a_2=map(node_function,[seq[i]]*Layer_1+context_units_out*recurrent_layer)
             a_3=map(node_function,a_2*Layer_2)
             direct_error=a_3-seq[i+1]
-            SE=0.5*sum(direct_error.*direct_error)
+            MSE=0.5*sum(direct_error.*direct_error) #This is not actually the square error but the mean 
             context_units_out=map(node_function,a_2*ones(2,2))
 
             #This is the foward pass for an individual point
@@ -168,18 +168,18 @@ function Train_Reccurent_Net_Loop(epochs,Layer_1,Layer_2,recurrent_layer,learnin
 
 
             if k==1
-                Starting_Square_Error[i]=SE
+                Starting_Square_Error[i]=MSE
             end
 
 
             if k==epochs
-                Final_Square_Error[i]=SE
+                Final_Square_Error[i]=MSE
             end
         
 
 
         end
-        println(string("Square Error = ",SE,"\r"))
+        println(string("Mean Square Error = ",MSE,"\r"))
     end
     return [Starting_Square_Error, Final_Square_Error]
 end
@@ -195,7 +195,7 @@ end
 
 #Here we run a temporal XOR example to show how the reccurent net learns with time:
 
-##Run
+# #Run
 
 
 # function hyper_curry(h)
@@ -223,9 +223,9 @@ end
 
 # using PyPlot
 
-# plot(xvals,y0,label="SE of First Epoch",alpha=0.4)
-# plot(xvals,yend,label="SE of Last Epoch",alpha=0.9)
-# title("SE Plot For Each Term in XOR Sequence ")
+# plot(xvals,y0,label="MSE of First Epoch",alpha=0.4)
+# plot(xvals,yend,label="MSE of Last Epoch",alpha=0.9)
+# title("MSE Plot For Each Term in XOR Sequence ")
 # xlabel(L"$n$")
 # ylabel(L"${XOR}_n$")
 # legend(loc="upper right",fancybox="true")
@@ -233,7 +233,7 @@ end
 # grid("off")
 # show()
 
-##End run
+# #End run
 
 # ========================================================================================================
 
