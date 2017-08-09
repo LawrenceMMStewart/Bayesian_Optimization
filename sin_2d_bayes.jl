@@ -20,7 +20,17 @@ function gaussian_process_chol(ker,D,noise,xrange)
     L=ctranspose(chol(K))
     temp=cov_gen(ker,x,xrange)
     Lk=\(L,cov_gen(ker,x,xrange))
-    mu=[vecdot(transpose(Lk)[i,:],(\(L,y))) for i=1:size(Lk)[1] ]
+
+    
+    # println("the current size of LK is = ",size(Lk))
+    # println("the size of \(L,y) is = ", size(\(L,y) ) )
+    # println("size of first column of thingy is ", size(Lk[:,1]))
+    # println("the dot product is ", dot(Lk[:,1],\(L,y) ))
+    
+    mu=[dot(Lk[:,i],(\(L,y))) for i=1:size(Lk)[2] ] #Here we have an error
+    
+    # println("the length of mu should be 10,000 it is in fact ",size(mu))
+
     K_=cov_gen(ker,xrange,xrange)+eye(length(xrange))*noise
     element1=diag(K_)
     s2=diag(K_)-[ sum( (Lk.*Lk)[:,i] ) for i=1:size(Lk)[2] ]  
@@ -45,13 +55,6 @@ ciy=map(x->x[2],Test)
 N=40
 
 
-
-
-
-
-
-
-
 Xsample=uniform(-pi,pi,N,1) #if uniform need to add (,1) to specify dimension
 Ysample=uniform(-pi,pi,N,1)
 
@@ -74,7 +77,7 @@ noise=1e-6
 Y=[sin(Randomsamp[i,1]+Randomsamp[i,2])+rand(noise_dist) for i=1:size(Randomsamp)[1]]
 
 
-K=cov_gen(std_exp_square_ker,Test,Test)+eye(length(Test))*1e-6
+# K=cov_gen(std_exp_square_ker,Test,Test)+eye(length(Test))*1e-6
  
 
 #Our samples are Randomsamp and y
@@ -83,70 +86,50 @@ K=cov_gen(std_exp_square_ker,Test,Test)+eye(length(Test))*1e-6
 #print(Randomsamp[1,:]) this gives you the array of each entry of Randomsamp
 
 D=[(Randomsamp[i,:],Y[i]) for i=1:length(Y)];
+
+mu,sigma,D = gaussian_process_chol(std_exp_square_ker,D,1e-6,Test);
+mu=reshape(mu,length(mu));
+sigma=reshape(sigma,length(sigma));
 # an entry from `D is in the form ([x,y],sin(x+y))
 
 # x=map(x->x[1],D)
 # print(size(x)) elements of x are in arrays;
 
-ker=std_exp_square_ker
+y=map(x->x[2],D);   # these are our y noisy function
+x=map(x->x[1],D); #These are our x training points (dont forget they come as arrays)
+x1=map(p->p[1],x)
+x2=map(p->p[2],x)
 
 
-#All good up to here:
-
-# println("This should be the size that we are working with Lk ", size(Lk))
-# element2=[ sum( (Lk.*Lk)[:,i] ) for i=1:size(Lk)[2] ]
-# println("for some reason the size of element2 is ", size(element2))
-# s2=element1-element2
-# print(s2)
-
-s2=diag(K_)-[ sum( (Lk.*Lk)[:,i] ) for i=1:size(Lk)[2] ]   #There isnt a good sum function to make a  vector where each entry is the sum of a row
+# println("x = ",x)
+# println("y = ",y)
+# println("x1= ",x1)
+# println("similarly for x2")
+# println("The shape of mu and sigma ==", size(mu),size(sigma))
 
 
-
-
-
-# mu,sigma,D = gaussian_process_chol(std_exp_square_ker,D,1e-6,Test);
-# mu=reshape(mu,length(mu));
-# sigma=reshape(sigma,length(sigma));
+# println("mu= ",mu)
+# # println("sigma = ",sigma)
+# println("mu and sigma should have thee same shape if this is true",size(mu)==size(sigma))
 
 
 
 
+using PyPlot
+fig = figure("pyplot_plot",figsize=(5,5))
+ax = axes()
+
+surf(x1,x2,y,alpha=0.8)
+surf(cix,ciy,sin_test,alpha=0.5)
+surf(cix,ciy,mu+2*sigma,alpha=0.3) #CI intervals:
+surf(cix,ciy,mu-2*sigma,alpha=0.3) #CI intervals:
 
 
-
-
-
-
-
-# y=map(x->x[2],D);   # these are our y noisy function
-# x=map(x->x[1],D); #These are our x training points (dont forget they come as arrays)
-# x1=map(p->p[1],x)
-# x2=map(p->p[2],x)
-
-
-
-
-
-
-
-
-
-# using PyPlot
-# # fig = figure("pyplot_plot",figsize=(5,5))
-# # ax = axes()
-# surf(x1,x2,y,alpha=0.8)
-# # surf(cix,ciy,sin_test,alpha=0.5)
-# surf(cix,ciy,mu+2*sigma,alpha=0.3) #CI intervals:
-# surf(cix,ciy,mu-2*sigma,alpha=0.3) #CI intervals:
-
-
-# title("Gaussian Process Sin(x+y)") 
-# # ylabel("f(x)")
-# # xlabel("x")
-# grid("off")
-# show()
-
+title("Gaussian Process Sin(x+y)") 
+# ylabel("f(x)")
+# xlabel("x")
+grid("off")
+show()
 
 
 
@@ -179,23 +162,16 @@ s2=diag(K_)-[ sum( (Lk.*Lk)[:,i] ) for i=1:size(Lk)[2] ]   #There isnt a good su
 # mu=[vecdot(transpose(Lk)[i,:],(\(L,y))) for i=1:size(Lk)[1] ]
 # K_=cov_gen(ker,xrange,xrange)+eye(length(xrange))*noise
 
-
-
-
-
-
-
-
-
-
-
-
 # println("The dimensions of K_ are ", size(K_))
 # println("Hence the size of diag K_ should be", size(K_)[1])
 
 # element1=diag(K_)
 # println("In fact the actual size is ", size(element1))
 # sigma=sqrt(s2) 
+# s2=diag(K_)-[ sum( (Lk.*Lk)[:,i] ) for i=1:size(Lk)[2] ]   #There isnt a good sum function to make a  vector where each entry is the sum of a row
+# mu,sigma,D = gaussian_process_chol(std_exp_square_ker,D,1e-6,Test);
+# mu=reshape(mu,length(mu));
+# sigma=reshape(sigma,length(sigma));
 
 
 # return (mu,sigma,D)
