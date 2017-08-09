@@ -36,7 +36,11 @@ a=0.001  #Change to 0.001
 b=1
 c=0.001
 d=1
-N=15 #10 does well
+N=10 #10 does well    
+
+#15 gives Minimum Average Square Error for Random Selection = 0.11429806093691719
+#Minimum Average Square Error for Bayesian Optimization = 0.1226313941360362
+
 
 
 Random_Learning_Rates=uniform(a,b,N,1)
@@ -90,7 +94,7 @@ show()
 #Bayesian Optimization Example===================================================
 
 #Here are the points we can pick from in the Optimization
-number_of_points=100 # at 75 was 0.12035 vs 0.11
+number_of_points=150 # at 75 was 0.12035 vs 0.11
 
 LR_Test=linspace(a,b,number_of_points)
 HP_Test=linspace(c,d,number_of_points)
@@ -126,6 +130,8 @@ mu=zeros(number_of_points)
 sigma=zeros(number_of_points)
 #Begin Bayesian Optimization:
 
+sigma_control=linspace(1,0.1,N) #Here we have added a parameter that fades away with time
+
 for k=2:N
     D=[(Bayesian_Points[i],Bayesian_Temporal_Means[i]) for i=1:length(Bayesian_Points)]
     mu, sigma, D=gaussian_process(std_exp_square_ker,D,1e-6,Test)
@@ -134,7 +140,7 @@ for k=2:N
     sigma=reshape(sigma,length(sigma))
 
 
-    new_point=findmin(mu-sigma)[2]
+    new_point=findmin(mu-sigma_control[k]*sigma)[2]
 
     #Here we will need to change the number 2 to k 
     Bayesian_Points=cat(1,Bayesian_Points,[Test[new_point]])
@@ -177,14 +183,16 @@ HP=[Bayesian_Points[i][2] for i=1:length(Bayesian_Points)]
 
 #Move this to the bottom
 println("Minimum Average Square Error for Random Selection = ", minimum(Random_Average_of_Temporal_Square_Errors))
+println("Maximum Average Square Error for Random Selection = ", maximum(Random_Average_of_Temporal_Square_Errors))
 println("Minimum Average Square Error for Bayesian Optimization = ", minimum(Bayesian_Temporal_Means))
-
+println("Maximum Average Square Error for Bayesian Optimization = ", maximum(Bayesian_Temporal_Means))
 
 using PyPlot
 # fig = figure("pyplot_subplot_mixed",figsize=(7,7))
 # ax=axes()
+scatter(LR,HP,Bayesian_Temporal_Means)
 surf(LR,HP,Bayesian_Temporal_Means,alpha=0.7)
-surf(LR,HP,mu+sigma,alpha=0.3)
+surf(LR,HP,mu+sigma,alpha=0.3) #If it decreases we need to change this to a matrix comprehension
 surf(LR,HP,mu-sigma,alpha=0.3)
 
 title("Average Temporal SE Plot for Optimized Sigmoid Hyper-Parameters and Learning Rates")
@@ -200,10 +208,6 @@ show()
 
 
 
-"""
-currently on:
-Minimum Average Square Error for Random Selection = 0.11421788795928434
-Minimum Average Square Error for Bayesian Optimization = 0.1081628656136723
 
 
-"""
+

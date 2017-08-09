@@ -8,7 +8,28 @@ function uniform(a,b,N,M)
 end
 using Distributions
 include("Kernals.jl")
-include("gaussian_process.jl")
+# include("gaussian_process.jl") Reinclude this 
+
+function gaussian_process_chol(ker,D,noise,xrange)
+    
+    y=map(x->x[2],D)   # these are our y noisy functions
+    x=map(x->x[1],D) #These are our x training points
+    
+    K = cov_gen(ker,x,x)+noise*eye(length(x))
+
+    L=ctranspose(chol(K))
+    temp=cov_gen(ker,x,xrange)
+    Lk=\(L,cov_gen(ker,x,xrange))
+    mu=[vecdot(transpose(Lk)[i,:],(\(L,y))) for i=1:size(Lk)[1] ]
+    K_=cov_gen(ker,xrange,xrange)+eye(length(xrange))*noise
+    element1=diag(K_)
+    s2=diag(K_)-[ sum( (Lk.*Lk)[:,i] ) for i=1:size(Lk)[2] ]  
+    sigma=sqrt(s2) 
+    return (mu,sigma,D)
+  
+end
+
+
 
 Xtest=linspace(-pi,pi,100)
 Ytest=linspace(-pi,pi,100)
@@ -44,8 +65,11 @@ end
 
 #Here Randomsamp is the (x,y) vectors:
 
+xrange=Test #delete thus line
+
 
 noise_dist=Normal(0,10.0^(-6))
+noise=1e-6
 # y=map(i-> sin( i[1]+i[2]),Randomsamp)+rand(noise_dist)
 Y=[sin(Randomsamp[i,1]+Randomsamp[i,2])+rand(noise_dist) for i=1:size(Randomsamp)[1]]
 
@@ -64,41 +88,114 @@ D=[(Randomsamp[i,:],Y[i]) for i=1:length(Y)];
 # x=map(x->x[1],D)
 # print(size(x)) elements of x are in arrays;
 
-mu,sigma,D = gaussian_process2(std_exp_square_ker,D,1e-6,Test);
-mu=reshape(mu,length(mu));
-sigma=reshape(sigma,length(sigma));
-
-y=map(x->x[2],D);   # these are our y noisy function
-x=map(x->x[1],D); #These are our x training points (dont forget they come as arrays)
-x1=map(p->p[1],x)
-x2=map(p->p[2],x)
+ker=std_exp_square_ker
 
 
+#All good up to here:
 
+# println("This should be the size that we are working with Lk ", size(Lk))
+# element2=[ sum( (Lk.*Lk)[:,i] ) for i=1:size(Lk)[2] ]
+# println("for some reason the size of element2 is ", size(element2))
+# s2=element1-element2
+# print(s2)
 
-
-
+s2=diag(K_)-[ sum( (Lk.*Lk)[:,i] ) for i=1:size(Lk)[2] ]   #There isnt a good sum function to make a  vector where each entry is the sum of a row
 
 
 
 
 
-
-
-using PyPlot
-# fig = figure("pyplot_plot",figsize=(5,5))
-# ax = axes()
-surf(x1,x2,y,alpha=0.8)
-# surf(cix,ciy,sin_test,alpha=0.5)
-surf(cix,ciy,mu+2*sigma,alpha=0.3) #CI intervals:
-surf(cix,ciy,mu-2*sigma,alpha=0.3) #CI intervals:
-
-
-title("Gaussian Process Sin(x+y)") 
-# ylabel("f(x)")
-# xlabel("x")
-grid("off")
-show()
+# mu,sigma,D = gaussian_process_chol(std_exp_square_ker,D,1e-6,Test);
+# mu=reshape(mu,length(mu));
+# sigma=reshape(sigma,length(sigma));
 
 
 
+
+
+
+
+
+
+
+
+# y=map(x->x[2],D);   # these are our y noisy function
+# x=map(x->x[1],D); #These are our x training points (dont forget they come as arrays)
+# x1=map(p->p[1],x)
+# x2=map(p->p[2],x)
+
+
+
+
+
+
+
+
+
+# using PyPlot
+# # fig = figure("pyplot_plot",figsize=(5,5))
+# # ax = axes()
+# surf(x1,x2,y,alpha=0.8)
+# # surf(cix,ciy,sin_test,alpha=0.5)
+# surf(cix,ciy,mu+2*sigma,alpha=0.3) #CI intervals:
+# surf(cix,ciy,mu-2*sigma,alpha=0.3) #CI intervals:
+
+
+# title("Gaussian Process Sin(x+y)") 
+# # ylabel("f(x)")
+# # xlabel("x")
+# grid("off")
+# show()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#function stuff
+
+# y=map(x->x[2],D)   # these are our y noisy functions
+# x=map(x->x[1],D) #These are our x training points
+    
+# K = cov_gen(ker,x,x)+noise*eye(length(x))
+
+# L=ctranspose(chol(K))
+# temp=cov_gen(ker,x,xrange)
+# Lk=\(L,cov_gen(ker,x,xrange))
+# mu=[vecdot(transpose(Lk)[i,:],(\(L,y))) for i=1:size(Lk)[1] ]
+# K_=cov_gen(ker,xrange,xrange)+eye(length(xrange))*noise
+
+
+
+
+
+
+
+
+
+
+
+
+# println("The dimensions of K_ are ", size(K_))
+# println("Hence the size of diag K_ should be", size(K_)[1])
+
+# element1=diag(K_)
+# println("In fact the actual size is ", size(element1))
+# sigma=sqrt(s2) 
+
+
+# return (mu,sigma,D)

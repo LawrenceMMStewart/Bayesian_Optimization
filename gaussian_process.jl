@@ -38,12 +38,14 @@ end
     
 #Another temporary one:
 
+
+    
 function gaussian_process2(ker,D,noise,xrange)
-    K_ss=cov_gen2(ker,xrange,xrange)+eye(length(xrange))*noise
+    K_ss=cov_gen(ker,xrange,xrange)+eye(length(xrange))*noise
     y=map(x->x[2],D)   # these are our y noisy functions
     x=map(x->x[1],D) #These are our x training points
-    K = cov_gen2(ker,x,x)+noise*eye(length(x))
-    K_s=cov_gen2(ker,x,xrange)  #K_s is as in nandos code but in the paper called little k
+    K = cov_gen(ker,x,x)+noise*eye(length(x))
+    K_s=cov_gen(ker,x,xrange)  #K_s is as in nandos code but in the paper called little k
     Inv_K=inv(K)  
     µ=transpose(K_s)*Inv_K*y
     sigma2=diag(K_ss-transpose(K_s)*Inv_K*K_s)  
@@ -51,4 +53,22 @@ function gaussian_process2(ker,D,noise,xrange)
     return (µ,sigma,D)
 end
     
+
+function gaussian_process_chol(ker,D,noise,xrange)
     
+    y=map(x->x[2],D)   # these are our y noisy functions
+    x=map(x->x[1],D) #These are our x training points
+    
+    K = cov_gen(ker,x,x)+noise*eye(length(x))
+
+    L=ctranspose(chol(K))
+    temp=cov_gen(ker,x,xrange)
+    Lk=\(L,cov_gen(ker,x,xrange))
+    mu=[vecdot(transpose(Lk)[i,:],(\(L,y))) for i=1:size(Lk)[1] ]
+    K_=cov_gen(ker,xrange,xrange)+eye(length(xrange))*noise
+    element1=diag(K_)
+    s2=diag(K_)-[ sum( (Lk.*Lk)[:,i] ) for i=1:size(Lk)[2] ]  
+    sigma=sqrt(s2) 
+    return (mu,sigma,D)
+  
+end
