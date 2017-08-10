@@ -144,35 +144,23 @@ x
 
 
 function cov_gen(ker,x,y)
-    K=zeros(length(x),length(y))
-    
-    #loop through values and update
-    for i=1:length(x)
-        for j=1:length(y)
-            K[i,j]=ker(x[i],y[j])   #Note for some reason here the way we have set up K means K[1][2] does 
-                                        #not work. We need to use K[1,2]. 
-            end
-    end
-    return K
+    return [ker(x[i],y[j]) for i=1:size(x)[1], j=1:size(y)[1]]
 end
 
-
+"""
+Update Both of these to make them both quicker
+"""
 
 #Second one here need to format and look nice;
 function cov_gen2(ker,x,y)
-    K=zeros(size(x)[1],size(y)[1])
-    
-    #loop through values and update
-    for i=1:size(x)[1]
-        for j=1:size(y)[1]
-            K[i,j]=ker(x[i],y[j])   #Note for some reason here the way we have set up K means K[1][2] does 
-                                        #not work. We need to use K[1,2]. 
-            end
-    end
-    return K
+    return cov_gen(ker,x,y)
 end
 
 
+function diag_cov_gen(ker,x)
+    K=[ker(x[i],x[i]) for i=1:length(x)]
+    return K
+end
 
 
 

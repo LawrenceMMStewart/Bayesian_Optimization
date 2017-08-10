@@ -54,21 +54,22 @@ function gaussian_process2(ker,D,noise,xrange)
 end
     
 
+
+
+
 function gaussian_process_chol(ker,D,noise,xrange)
+    
     
     y=map(x->x[2],D)   # these are our y noisy functions
     x=map(x->x[1],D) #These are our x training points
-    
     K = cov_gen(ker,x,x)+noise*eye(length(x))
-
     L=ctranspose(chol(K))
-    temp=cov_gen(ker,x,xrange)
-    Lk=\(L,cov_gen(ker,x,xrange))
-    mu=[vecdot(transpose(Lk)[i,:],(\(L,y))) for i=1:size(Lk)[1] ]
-    K_=cov_gen(ker,xrange,xrange)+eye(length(xrange))*noise
-    element1=diag(K_)
-    s2=diag(K_)-[ sum( (Lk.*Lk)[:,i] ) for i=1:size(Lk)[2] ]  
+    # temp=cov_gen(ker,x,xrange)
+    Lk=\(L,cov_gen(ker,x,xrange)) 
+
+    mu=[dot(Lk[:,i],(\(L,y))) for i=1:size(Lk)[2] ] #Here we have an error
+    K_diag=diag_cov_gen(ker,xrange)+ones(length(xrange))*noise
+    s2=K_diag-[ sum( (Lk.*Lk)[:,i] ) for i=1:size(Lk)[2] ]  
     sigma=sqrt(s2) 
     return (mu,sigma,D)
-  
 end

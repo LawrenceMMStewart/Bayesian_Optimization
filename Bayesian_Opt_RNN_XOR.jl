@@ -15,7 +15,7 @@ Layer_2=uniform(0,1,2,1)
 recurrent_layer=uniform(0,1,2,2)
 
 Seq_Len=100
-epochs=100 #100 was good before
+epochs=75 #100 was good before
 
 
 function hyper_curry(h)
@@ -36,7 +36,7 @@ a=0.001  #Change to 0.001
 b=1
 c=0.001
 d=1
-N=10 #10 does well    
+N=15 #10 does well    
 
 #15 gives Minimum Average Square Error for Random Selection = 0.11429806093691719
 #Minimum Average Square Error for Bayesian Optimization = 0.1226313941360362
@@ -94,7 +94,7 @@ show()
 #Bayesian Optimization Example===================================================
 
 #Here are the points we can pick from in the Optimization
-number_of_points=150 # at 75 was 0.12035 vs 0.11
+number_of_points=125 # at 75 was 0.12035 vs 0.11
 
 LR_Test=linspace(a,b,number_of_points)
 HP_Test=linspace(c,d,number_of_points)
@@ -132,42 +132,43 @@ sigma=zeros(number_of_points)
 
 sigma_control=linspace(1,0.1,N) #Here we have added a parameter that fades away with time
 
-for k=2:N
-    D=[(Bayesian_Points[i],Bayesian_Temporal_Means[i]) for i=1:length(Bayesian_Points)]
-    mu, sigma, D=gaussian_process(std_exp_square_ker,D,1e-6,Test)
-    println("Gaussian Process Complete","\r")
-    mu=reshape(mu,length(mu));
-    sigma=reshape(sigma,length(sigma))
+@time begin 
+    for k=2:N
+        D=[(Bayesian_Points[i],Bayesian_Temporal_Means[i]) for i=1:length(Bayesian_Points)]
+        mu, sigma, D=gaussian_process_chol(std_exp_square_ker,D,1e-6,Test)  #This line here has been changed to chol version of gaussian_process
+        println("Gaussian Process", k, " Complete","\r")
+        mu=reshape(mu,length(mu));
+        sigma=reshape(sigma,length(sigma))
 
 
-    new_point=findmin(mu-sigma_control[k]*sigma)[2]
+        new_point=findmin(mu-sigma_control[k]*sigma)[2]
 
-    #Here we will need to change the number 2 to k 
-    Bayesian_Points=cat(1,Bayesian_Points,[Test[new_point]])
+        #Here we will need to change the number 2 to k 
+        Bayesian_Points=cat(1,Bayesian_Points,[Test[new_point]])
 
-    learning_rate=Bayesian_Points[k][1]
- 
-    node_function=hyper_curry(Bayesian_Points[k][2])
+        learning_rate=Bayesian_Points[k][1]
+     
+        node_function=hyper_curry(Bayesian_Points[k][2])
 
-    node_deriv=hyper_curry_deriv(Bayesian_Points[k][2])
+        node_deriv=hyper_curry_deriv(Bayesian_Points[k][2])
 
-    P=Train_Reccurent_Net_Loop(epochs,Layer_1,Layer_2,recurrent_layer,learning_rate,node_function,node_deriv,Seq_Len)
-    value_to_be_appended=(1/length(P[2]))*sum(P[2])
+        P=Train_Reccurent_Net_Loop(epochs,Layer_1,Layer_2,recurrent_layer,learning_rate,node_function,node_deriv,Seq_Len)
+        value_to_be_appended=(1/length(P[2]))*sum(P[2])
 
-    
+        
 
-    if value_to_be_appended !=Bayesian_Temporal_Means[k-1]
-        Bayesian_Temporal_Means=cat(1,Bayesian_Temporal_Means,[value_to_be_appended])
-        println("Epoch ", k, " Complete")
-    else
-        println("Found Optimum on the ", k-1, " iteration of ", N, " iterations")
-        Bayesian_Points=Bayesian_Points[1:length(Bayesian_Points)-1]
-        break
+        if value_to_be_appended !=Bayesian_Temporal_Means[k-1]
+            Bayesian_Temporal_Means=cat(1,Bayesian_Temporal_Means,[value_to_be_appended])
+            println("Epoch ", k, " Complete")
+        else
+            println("Found Optimum on the ", k-1, " iteration of ", N, " iterations")
+            Bayesian_Points=Bayesian_Points[1:length(Bayesian_Points)-1]
+            break
+        end
+
     end
 
-end
-
-println("Bayesian_Learning_Rates Training Complete")
+    println("Bayesian_Learning_Rates Training Complete")
 
 
 # Bayesian Plotting =========================================================
@@ -186,6 +187,10 @@ println("Minimum Average Square Error for Random Selection = ", minimum(Random_A
 println("Maximum Average Square Error for Random Selection = ", maximum(Random_Average_of_Temporal_Square_Errors))
 println("Minimum Average Square Error for Bayesian Optimization = ", minimum(Bayesian_Temporal_Means))
 println("Maximum Average Square Error for Bayesian Optimization = ", maximum(Bayesian_Temporal_Means))
+
+
+end
+
 
 using PyPlot
 # fig = figure("pyplot_subplot_mixed",figsize=(7,7))

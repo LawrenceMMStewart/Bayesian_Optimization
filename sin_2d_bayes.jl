@@ -6,42 +6,31 @@ function uniform(a,b,N,M)
     #where rand() prints real numbers:
     rand(N,M)*(b-a)+a
 end
+
 using Distributions
 include("Kernals.jl")
-# include("gaussian_process.jl") Reinclude this 
+include("gaussian_process.jl") 
 
-function gaussian_process_chol(ker,D,noise,xrange)
+
+# function gaussian_process_chol(ker,D,noise,xrange)
     
-    y=map(x->x[2],D)   # these are our y noisy functions
-    x=map(x->x[1],D) #These are our x training points
     
-    K = cov_gen(ker,x,x)+noise*eye(length(x))
+#     y=map(x->x[2],D)   # these are our y noisy functions
+#     x=map(x->x[1],D) #These are our x training points
+#     K = cov_gen(ker,x,x)+noise*eye(length(x))
+#     L=ctranspose(chol(K))
+#     # temp=cov_gen(ker,x,xrange)
+#     Lk=\(L,cov_gen(ker,x,xrange)) 
 
-    L=ctranspose(chol(K))
-    temp=cov_gen(ker,x,xrange)
-    Lk=\(L,cov_gen(ker,x,xrange))
-
-    
-    # println("the current size of LK is = ",size(Lk))
-    # println("the size of \(L,y) is = ", size(\(L,y) ) )
-    # println("size of first column of thingy is ", size(Lk[:,1]))
-    # println("the dot product is ", dot(Lk[:,1],\(L,y) ))
-    
-    mu=[dot(Lk[:,i],(\(L,y))) for i=1:size(Lk)[2] ] #Here we have an error
-    
-    # println("the length of mu should be 10,000 it is in fact ",size(mu))
-
-    K_=cov_gen(ker,xrange,xrange)+eye(length(xrange))*noise
-    element1=diag(K_)
-    s2=diag(K_)-[ sum( (Lk.*Lk)[:,i] ) for i=1:size(Lk)[2] ]  
-    sigma=sqrt(s2) 
-    return (mu,sigma,D)
-  
-end
+#     mu=[dot(Lk[:,i],(\(L,y))) for i=1:size(Lk)[2] ] #Here we have an error
+#     K_diag=diag_cov_gen(ker,xrange)+ones(length(xrange))*noise
+#     s2=K_diag-[ sum( (Lk.*Lk)[:,i] ) for i=1:size(Lk)[2] ]  
+#     sigma=sqrt(s2) 
+#     return (mu,sigma,D)
+# end
 
 
-
-Xtest=linspace(-pi,pi,100)
+Xtest=linspace(-pi,pi,100) #Was 100
 Ytest=linspace(-pi,pi,100)
 Test=gen_points([Xtest,Ytest])[1]
 sin_test = map(i -> sin(i[1]+i[2]),Test)
@@ -87,10 +76,19 @@ Y=[sin(Randomsamp[i,1]+Randomsamp[i,2])+rand(noise_dist) for i=1:size(Randomsamp
 
 D=[(Randomsamp[i,:],Y[i]) for i=1:length(Y)];
 
-mu,sigma,D = gaussian_process_chol(std_exp_square_ker,D,1e-6,Test);
+@time begin
+   mu,sigma,D = gaussian_process_chol(std_exp_square_ker,D,1e-6,Test); 
+end
+
+#  39.571934 seconds for gaussian_process
+#Now it is slower again
+
+
 mu=reshape(mu,length(mu));
 sigma=reshape(sigma,length(sigma));
 # an entry from `D is in the form ([x,y],sin(x+y))
+
+
 
 # x=map(x->x[1],D)
 # print(size(x)) elements of x are in arrays;
@@ -130,6 +128,7 @@ title("Gaussian Process Sin(x+y)")
 # xlabel("x")
 grid("off")
 show()
+
 
 
 
