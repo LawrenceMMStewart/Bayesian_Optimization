@@ -27,7 +27,7 @@ epochs=1000   # was 1000 below, please change back
 a=0.001  #Change to 0.001
 b=1
 
-c=0.001
+c=0.001 #Was the same as above
 d=1
 
 N=20   
@@ -130,7 +130,7 @@ Bayesian_MSE=[Train_Neural_Net_Loop(epochs,Layer_1,Layer_2,learning_rate,node_fu
 
 for k=2:N
     D=[(Bayesian_Points[i],Bayesian_MSE[i]) for i=1:length(Bayesian_Points)]
-    mu, sigma, D=gaussian_process(std_exp_square_ker,D,1e-6,Test)
+    mu, sigma, D=gaussian_process_chol(std_exp_square_ker,D,1e-6,Test)
     println("Gaussian Process Complete","\r")
     mu=reshape(mu,length(mu));
     sigma=reshape(sigma,length(sigma))
@@ -157,6 +157,7 @@ for k=2:N
     else
         println("Found Optimum on the ", k-1, " iteration of ", N, " iterations")
         Bayesian_Points=Bayesian_Points[1:length(Bayesian_Points)-1]
+        
         break
     end
 
@@ -167,7 +168,7 @@ end
 # Bayesian Plotting =========================================================
 
 
-
+println(" The optimium is located at ",Bayesian_Points[end])
 
 LR=[Bayesian_Points[i][1] for i=1:length(Bayesian_Points)]
 HP=[Bayesian_Points[i][2] for i=1:length(Bayesian_Points)]
@@ -198,62 +199,105 @@ show()
 
 
 
-
-
-
-
-
-
-"""
-============================================== Results ==========================================
-
-
-
-_________ Experiment 1_____________________
-
-#We let the learning rate and hyper-parameter be between 0.001 and 1
-#we sample 25 times with 1000 epochs:
-
-consider µ+a*sigma where a is in (0,1). This is for standard LCB bayesian optimization:
-
-==================================================================================
-a=1 -----> 
-
-Found Optimum on the 6 iteration of 20 iterations
+""""
+For 100 range
 The minimum MSE by Bayesian Optimization was0.1766613895128894
 The minnmum MSE by Random Selection was0.2931509389546021
+""""
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# """
+# ============================================== Results ==========================================
+
+
+
+# _________ Experiment 1_____________________
+
+# #We let the learning rate and hyper-parameter be between 0.001 and 1
+# #we sample 25 times with 1000 epochs:
+
+# consider µ+a*sigma where a is in (0,1). This is for standard LCB bayesian optimization:
+
+# ==================================================================================
+# a=1 -----> 
+
+# Found Optimum on the 6 iteration of 20 iterations
+# The minimum MSE by Bayesian Optimization was0.1766613895128894
+# The minnmum MSE by Random Selection was0.2931509389546021
  
-==================================================================================
-a=0.75 ---->
+# ==================================================================================
+# a=0.75 ---->
 
-Found Optimum on the 6 iteration of 20 iterations
+# Found Optimum on the 6 iteration of 20 iterations
 
-The minimum MSE by Bayesian Optimization was0.1766613895128894
-The minnmum MSE by Random Selection was0.2931509389546021
-==================================================================================
-a=0.5 -->
+# The minimum MSE by Bayesian Optimization was0.1766613895128894
+# The minnmum MSE by Random Selection was0.2931509389546021
+# ==================================================================================
+# a=0.5 -->
 
-Found Optimum on the 4 iteration of 20 iterations
+# Found Optimum on the 4 iteration of 20 iterations
 
-The minimum MSE by Bayesian Optimization was0.1766613895128894
-The minnmum MSE by Random Selection was0.2931509389546021
-==================================================================================
-a=0.25 -->
+# The minimum MSE by Bayesian Optimization was0.1766613895128894
+# The minnmum MSE by Random Selection was0.2931509389546021
+# ==================================================================================
+# a=0.25 -->
 
-Found Optimum on the 4 iteration of 20 iterations 
+# Found Optimum on the 4 iteration of 20 iterations 
 
-The minimum MSE by Bayesian Optimization was0.1766613895128894
-The minnmum MSE by Random Selection was0.2931509389546021
-==================================================================================
+# The minimum MSE by Bayesian Optimization was0.1766613895128894
+# The minnmum MSE by Random Selection was0.2931509389546021
+# ==================================================================================
 
-Shows the exploitation of the network (µ(x)) vs the exploration (sig(x)) does not 
-really matter in terms of the final MSE however the smaller a found it in less.
-"""
-
-
-#a few other tests mnay or may not be of use:
+# Shows the exploitation of the network (µ(x)) vs the exploration (sig(x)) does not 
+# really matter in terms of the final MSE however the smaller a found it in less.
+# """
 
 
+# #a few other tests mnay or may not be of use:
 
 
 
@@ -263,35 +307,37 @@ really matter in terms of the final MSE however the smaller a found it in less.
 
 
 
-#This part is probably pretty pointless...
+
+
+# #This part is probably not worth reporting
 
 
 
-"""
+# """
 
-We let the learning rate and hyper-parameter be between 0.001 and 1 and then we let the utlilty
-funciton be µ+sig a and we vary the epochs:
+# We let the learning rate and hyper-parameter be between 0.001 and 1 and then we let the utlilty
+# funciton be µ+sig a and we vary the epochs:
 
-=====================================================================================
-epochs=100
-
-
-The minimum MSE by Bayesian Optimization was0.49988990389321153
-The minnmum MSE by Random Selection was0.49998255640113864
+# =====================================================================================
+# epochs=100
 
 
-==================================================================================
-epochs=1000
+# The minimum MSE by Bayesian Optimization was0.49988990389321153
+# The minnmum MSE by Random Selection was0.49998255640113864
 
-Found Optimum on the 6 iteration of 20 iterations
-The minimum MSE by Bayesian Optimization was0.1766613895128894
-The minnmum MSE by Random Selection was0.2931509389546021
 
-=====================================================================================
+# ==================================================================================
+# epochs=1000
 
-epochs=10000
+# Found Optimum on the 6 iteration of 20 iterations
+# The minimum MSE by Bayesian Optimization was0.1766613895128894
+# The minnmum MSE by Random Selection was0.2931509389546021
 
-Found Optimum on the 13 iteration of 20 iterations
-The minimum MSE by Bayesian Optimization was0.009528558587888813
-The minnmum MSE by Random Selection was0.013710474738066445
+# =====================================================================================
+
+# epochs=10000
+
+# Found Optimum on the 13 iteration of 20 iterations
+# The minimum MSE by Bayesian Optimization was0.009528558587888813
+# The minnmum MSE by Random Selection was0.013710474738066445
 

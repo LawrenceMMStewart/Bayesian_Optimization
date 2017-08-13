@@ -122,10 +122,35 @@ end
 Layer_1=uniform(0,1,1,2) 
 Layer_2=uniform(0,1,2,1)
 recurrent_layer=uniform(0,1,2,2)
-
-
-
 Seq_Len=100
+
+
+
+
+#Train_Reccurent_Net_Loop.jl
+
+"""
+Trains a Recurrent Neural Net with one input 2 hidden units, 2 context units and one output unit.
+
+Arguments
+---------
+Epochs
+    Number of backpropagation epochs
+Layer_1
+    The Weight matrix for the first hidden layer
+Layer_2
+    The Weight matrix for the second hidden layer
+recurrent_layer
+    The weight matrix for the context unit going to the first hidden layer
+learning_rate
+    The learning rate used in gradient descent
+node_function
+    The activation function used at the nodes
+node_deriv  
+    The deriviative of the activation functio
+Seq_Len
+    Size of temporal XOR Sequence
+"""
 
 
 

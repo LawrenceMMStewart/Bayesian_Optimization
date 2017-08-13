@@ -15,7 +15,7 @@ Layer_2=uniform(0,1,2,1)
 recurrent_layer=uniform(0,1,2,2)
 
 Seq_Len=100
-epochs=75 #100 was good before
+epochs=100 #100 was good before
 
 
 function hyper_curry(h)
@@ -36,7 +36,7 @@ a=0.001  #Change to 0.001
 b=1
 c=0.001
 d=1
-N=15 #10 does well    
+N=10 #10 does well    
 
 #15 gives Minimum Average Square Error for Random Selection = 0.11429806093691719
 #Minimum Average Square Error for Bayesian Optimization = 0.1226313941360362
@@ -94,7 +94,7 @@ show()
 #Bayesian Optimization Example===================================================
 
 #Here are the points we can pick from in the Optimization
-number_of_points=125 # at 75 was 0.12035 vs 0.11
+number_of_points=75 # at 75 was 0.12035 vs 0.11
 
 LR_Test=linspace(a,b,number_of_points)
 HP_Test=linspace(c,d,number_of_points)
@@ -130,7 +130,9 @@ mu=zeros(number_of_points)
 sigma=zeros(number_of_points)
 #Begin Bayesian Optimization:
 
-sigma_control=linspace(1,0.1,N) #Here we have added a parameter that fades away with time
+# sigma_control=linspace(1,0.1,N) #Here we have added a parameter that fades away with time
+
+
 
 @time begin 
     for k=2:N
@@ -141,7 +143,7 @@ sigma_control=linspace(1,0.1,N) #Here we have added a parameter that fades away 
         sigma=reshape(sigma,length(sigma))
 
 
-        new_point=findmin(mu-sigma_control[k]*sigma)[2]
+        new_point=findmin(mu-sigma)[2]
 
         #Here we will need to change the number 2 to k 
         Bayesian_Points=cat(1,Bayesian_Points,[Test[new_point]])
@@ -160,6 +162,7 @@ sigma_control=linspace(1,0.1,N) #Here we have added a parameter that fades away 
         if value_to_be_appended !=Bayesian_Temporal_Means[k-1]
             Bayesian_Temporal_Means=cat(1,Bayesian_Temporal_Means,[value_to_be_appended])
             println("Epoch ", k, " Complete")
+
         else
             println("Found Optimum on the ", k-1, " iteration of ", N, " iterations")
             Bayesian_Points=Bayesian_Points[1:length(Bayesian_Points)-1]
@@ -184,8 +187,8 @@ HP=[Bayesian_Points[i][2] for i=1:length(Bayesian_Points)]
 
 #Move this to the bottom
 println("Minimum Average Square Error for Random Selection = ", minimum(Random_Average_of_Temporal_Square_Errors))
-println("Maximum Average Square Error for Random Selection = ", maximum(Random_Average_of_Temporal_Square_Errors))
 println("Minimum Average Square Error for Bayesian Optimization = ", minimum(Bayesian_Temporal_Means))
+println("Maximum Average Square Error for Random Selection = ", maximum(Random_Average_of_Temporal_Square_Errors))
 println("Maximum Average Square Error for Bayesian Optimization = ", maximum(Bayesian_Temporal_Means))
 
 
@@ -197,8 +200,8 @@ using PyPlot
 # ax=axes()
 scatter(LR,HP,Bayesian_Temporal_Means)
 surf(LR,HP,Bayesian_Temporal_Means,alpha=0.7)
-surf(LR,HP,mu+sigma,alpha=0.3) #If it decreases we need to change this to a matrix comprehension
-surf(LR,HP,mu-sigma,alpha=0.3)
+surf(LR,HP,mu+2*sigma,alpha=0.3) #This should be just mu not 2*mu
+surf(LR,HP,mu-2*sigma,alpha=0.3)
 
 title("Average Temporal SE Plot for Optimized Sigmoid Hyper-Parameters and Learning Rates")
 xlabel("Learning Rates")
@@ -209,6 +212,103 @@ grid("off")
 show()
 
 
+
+
+
+
+
+"""
+============================================== Results ==========================================
+
+
+
+_________ Experiment 1_____________________
+
+We will see how the error changes with various values First we will change 
+Seq_Len=100
+epochs=100
+N=10
+number_of_points=125
+
+Output---->
+Minimum Average Square Error for Random Selection = 0.1203530371912469
+Minimum Average Square Error for Bayesian Optimization = 0.11446107828879067
+Maximum Average Square Error for Random Selection = 0.13370180297876086
+Maximum Average Square Error for Bayesian Optimization = 0.12899905541674905
+
+
+We now change the value N to see what happens:
+============================================== 
+N=20
+
+Minimum Average Square Error for Random Selection = 0.11933513840710926
+Minimum Average Square Error for Bayesian Optimization = 0.11560440985781831
+Maximum Average Square Error for Random Selection = 0.1303499358710453
+Maximum Average Square Error for Bayesian Optimization = 0.131934570268544
+
+as we can see this has far less impact
+
+============================================== 
+N=5
+
+Minimum Average Square Error for Random Selection = 0.12435012501543988
+Minimum Average Square Error for Bayesian Optimization = 0.12383116207821351
+Maximum Average Square Error for Random Selection = 0.12989541500123994
+Maximum Average Square Error for Bayesian Optimization = 0.12737815821942364
+
+
+
+
+
+More random ones
+
+Seq_Len=100
+epochs=100
+N=100
+number_of_points=75
+
+see how this gaussian_process
+output-->
+
+Minimum Average Square Error for Random Selection = 0.11438941310870633
+Minimum Average Square Error for Bayesian Optimization = 0.11159015815940883
+Maximum Average Square Error for Random Selection = 0.13087656813355802
+Maximum Average Square Error for Bayesian Optimization = 0.1300878843237718
+
+
+==============================================
+
+
+Lets try a large sequence length
+
+
+Seq_Len=3000
+epochs=100
+N=15
+number_of_points=75
+
+Minimum Average Square Error for Random Selection = 0.12499468626485709
+Minimum Average Square Error for Bayesian Optimization = 0.12493735720265979
+Maximum Average Square Error for Random Selection = 0.12669453032837658
+Maximum Average Square Error for Bayesian Optimization = 0.12662348856300
+
+
+==============================================
+
+
+
+
+Seq_Len=100
+epochs=50
+N=15
+number_of_points=75
+
+Minimum Average Square Error for Random Selection = 0.1179449010241154
+Minimum Average Square Error for Bayesian Optimization = 0.12358375337646431
+Maximum Average Square Error for Random Selection = 0.1296091692096744
+Maximum Average Square Error for Bayesian Optimization = 0.13191330829847336
+
+"""
 
 
 
