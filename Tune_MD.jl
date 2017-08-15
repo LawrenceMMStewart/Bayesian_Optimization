@@ -81,7 +81,7 @@ using PyPlot
 ax=axes()
 
 surf(reshape(Random_Learning_Rates,size(Random_MSE)),reshape(Random_Hyperparameters,size(Random_MSE)),Random_MSE,alpha=0.7)
-title("MSE Plot for varied Sigmoid Hyper-Parameters and Learning Rates")
+title("MSE for 20 Randomly Selected Hyper-Parameter Values")
 xlabel("Learning Rates")
 ylabel("Hyper-Parameters")
 zlabel("Mean Square Error")
@@ -179,14 +179,34 @@ HP=[Bayesian_Points[i][2] for i=1:length(Bayesian_Points)]
 #Move this to the bottom
 println("Bayesian_Learning_Rates Training Complete")
 println("The minimum MSE by Bayesian Optimization was", minimum(Bayesian_MSE))
-println("The minnmum MSE by Random Selection was", minimum(Random_MSE))
+println("The mininmum MSE by Random Selection was", minimum(Random_MSE))
 
 using PyPlot
 # fig = figure("pyplot_subplot_mixed",figsize=(7,7))
 # ax=axes()
 surf(LR,HP,Bayesian_MSE,alpha=0.7)
 
-title("MSE Plot for Optimized Sigmoid Hyper-Parameters and Learning Rates")
+title("MSE for Sigmoid Hyper-Parameters and Learning Rates Selected by BO")
+xlabel("Learning Rates")
+ylabel("Hyper-Parameters")
+zlabel("Mean Square Error")
+
+grid("off")
+show()
+
+
+
+
+using PyPlot
+# fig = figure("pyplot_subplot_mixed",figsize=(7,7))
+# ax=axes()
+
+surf(reshape(Random_Learning_Rates,size(Random_MSE)),reshape(Random_Hyperparameters,size(Random_MSE)),Random_MSE,alpha=0.3,label="Random Selection")
+surf(LR,HP,Bayesian_MSE,alpha=0.3,label="Bayesian Optimization")
+legend()
+
+
+title("MSE for Sigmoid Hyper-Parameters and Learning Rates Selected by BO")
 xlabel("Learning Rates")
 ylabel("Hyper-Parameters")
 zlabel("Mean Square Error")
@@ -198,11 +218,10 @@ show()
 
 
 
-
 """"
 For 100 range
-The minimum MSE by Bayesian Optimization was0.1766613895128894
-The minnmum MSE by Random Selection was0.2931509389546021
+The minimum MSE by Bayesian Optimization was 0.1766613895128894
+The minimum MSE by Random Selection was 0.2931509389546021
 """"
 
 

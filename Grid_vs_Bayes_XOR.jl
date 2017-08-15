@@ -14,7 +14,7 @@ srand(1234) #Seed for stalzer srand(1234)
 """
 We will compare the effect of randomly selecting a learning rate and sigmoid 
 hyperparemeter vs the use of Bayesian Optimization for finding the optimial LR on the MSE. 
-Suppose we have limited computing time of 100000 epochs and that we have N tries to 
+Suppose we have limited computing time of 100000 epochs and that we haveju N tries to 
 minimise the MSE. Let us say that the learning rate is between a and b
 
 """
@@ -25,7 +25,7 @@ Layer_1=uniform(0,1,2,2)
 
 Layer_2=uniform(0,1,2,1) 
 
-epoch_vec=linspace(1,1000,10)   # was 1000 below, please change back
+epoch_vec=linspace(10,1000,20)   # For the final report up this to 100 and leave for 10 minute to get smoothest graph
 epoch_bayes_result=zeros(epoch_vec)
 epoch_random_result=zeros(epoch_vec)
 
@@ -35,7 +35,7 @@ a=0.001  #Change to 0.001
 b=1
 
 c=0.001 #Was the same as above
-d=1
+d=1 #Change back to what it was before which was same as a, b
 
 N=20   
 
@@ -92,8 +92,8 @@ for p=1:length(epoch_vec)
 
     #Here are the points we can pick from in the Optimization
 
-    LR_Test=linspace(a,b,100)
-    HP_Test=linspace(c,d,100)
+    LR_Test=linspace(a,b,75)
+    HP_Test=linspace(c,d,75)
 
     #Here is the carteisan product of these written as a vector
     Test=gen_points([LR_Test,HP_Test])[1]
@@ -158,6 +158,7 @@ for p=1:length(epoch_vec)
             break
         end
 
+        
     end
 
 
@@ -176,26 +177,25 @@ for p=1:length(epoch_vec)
     #Move this to the bottom
     println("Bayesian_Learning_Rates Training Complete")
     println("The minimum MSE by Bayesian Optimization was", minimum(Bayesian_MSE))
-    println("The minnmum MSE by Random Selection was", minimum(Random_MSE))
+    println("The mininmum MSE by Random Selection was", minimum(Random_MSE))
 
 
-  
+    println("completed cycle ",p, " out of overall cycle", length(epoch_vec))
 
 
 end
 
-println("bayes " ,epoch_bayes_result)
-println("random ",epoch_random_result)
 
 using PyPlot
 # fig = figure("pyplot_subplot_mixed",figsize=(7,7))
 # ax=axes()
-plot(epoch_vec,epoch_bayes_result)
+plot(epoch_vec,epoch_bayes_result,label="Bayesian Optimization")
 
-plot(epoch_vec,epoch_random_result)
+plot(epoch_vec,epoch_random_result,label="Random Grid Search",alpha=0.7)
 title("MSE Plot for different epochs")
 xlabel("Epochs")
 ylabel("MSE")
+legend(loc="upper right",fancybox="true")
 grid("on")
 show()
 
