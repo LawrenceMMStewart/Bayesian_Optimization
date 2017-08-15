@@ -11,7 +11,7 @@ srand(1234) #Seed for stalzer srand(1234)
 
 """
 We will compare the effect of randomly selecting a learning rate and sigmoid 
-hyperparemeter vs the use of Bayesian Optimization for finding the optimial LR on the MSE. 
+hyperparameter vs the use of Bayesian Optimization for finding the optimial values wrt the MSE. 
 Suppose we have limited computing time of 100000 epochs and that we have N tries to 
 minimise the MSE. Let us say that the learning rate is between a and b
 
@@ -84,8 +84,8 @@ ax=axes()
 
 surf(reshape(Random_Learning_Rates,size(Random_MSE)),reshape(Random_Hyperparameters,size(Random_MSE)),Random_MSE,alpha=0.65,color="#40d5bb")
 title("MSE for 20 Randomly Selected Hyper-Parameter Values")
-xlabel("Learning Rates")
-ylabel("Hyper-Parameters")
+xlabel("Learning Rate")
+ylabel("Hyper-Parameter")
 zlabel("Mean Square Error")
 grid("on")
 show()
@@ -180,6 +180,13 @@ HP=[Bayesian_Points[i][2] for i=1:length(Bayesian_Points)]
 
 
 
+
+
+planex=[0,0,1,1]
+planey=[0,1,0,1]
+planem=[minimum(Random_MSE),minimum(Random_MSE),minimum(Random_MSE),minimum(Random_MSE)]
+
+
 #Move this to the bottom
 println("Bayesian_Learning_Rates Training Complete")
 println("The minimum MSE by Bayesian Optimization was", minimum(Bayesian_MSE))
@@ -189,12 +196,12 @@ using PyPlot
 # fig = figure("pyplot_subplot_mixed",figsize=(7,7))
 # ax=axes()
 surf(LR,HP,Bayesian_MSE,alpha=0.65,color="#40d5bb")
+surf(planex,planey,planem,alpha=0.3,color="#aa231f")
 
-title("MSE for Sigmoid Hyper-Parameters and Learning Rates Selected by BO")
-xlabel("Learning Rates")
-ylabel("Hyper-Parameters")
+title("MSE -BO (six points)")
+xlabel("Learning Rate")
+ylabel("Hyper-Parameter")
 zlabel("Mean Square Error")
-
 grid("off")
 show()
 
