@@ -46,29 +46,31 @@ end
 
 # Random Learning Rates Examples ========================================
 
+@time begin
+    Random_Learning_Rates=uniform(a,b,N,1)
+    Random_Hyperparameters=uniform(c,d,N,1)
+    Random_Mat=cat(2,Random_Learning_Rates,Random_Hyperparameters)
+    Random_MSE=zeros(N)
 
 
-Random_Learning_Rates=uniform(a,b,N,1)
-Random_Hyperparameters=uniform(c,d,N,1)
-Random_Mat=cat(2,Random_Learning_Rates,Random_Hyperparameters)
-Random_MSE=zeros(N)
-
-
-#Random_Mat conjoins Random_Learning_Rates and Random_Hyperparameters
-# Random_Mat is a Nx2 matrix where Random_Mat[1,:] is the first entry
-#with LR_1 and hyperparemeter 1.
+    #Random_Mat conjoins Random_Learning_Rates and Random_Hyperparameters
+    # Random_Mat is a Nx2 matrix where Random_Mat[1,:] is the first entry
+    #with LR_1 and hyperparemeter 1.
 
 
 
-for i=1:length(Random_Learning_Rates)
-    node_function=hyper_curry(Random_Mat[i,2])
-    node_deriv=hyper_curry_deriv(Random_Mat[i,2])
-    learning_rate=Random_Mat[i,1]
-    Random_MSE[i]=Train_Neural_Net_Loop(epochs,Layer_1,Layer_2,learning_rate,node_function,node_deriv)[3]
-    println("Epoch Complete")
+    for i=1:length(Random_Learning_Rates)
+        node_function=hyper_curry(Random_Mat[i,2])
+        node_deriv=hyper_curry_deriv(Random_Mat[i,2])
+        learning_rate=Random_Mat[i,1]
+        Random_MSE[i]=Train_Neural_Net_Loop(epochs,Layer_1,Layer_2,learning_rate,node_function,node_deriv)[3]
+        println("Epoch Complete")
+    end
+
+    println("Random Learning Rates Training Completed")
+   
 end
 
-println("Random Learning Rates Training Completed")
 
 
 
@@ -80,90 +82,93 @@ using PyPlot
 # fig = figure("pyplot_subplot_mixed",figsize=(7,7))
 ax=axes()
 
-surf(reshape(Random_Learning_Rates,size(Random_MSE)),reshape(Random_Hyperparameters,size(Random_MSE)),Random_MSE,alpha=0.7)
+surf(reshape(Random_Learning_Rates,size(Random_MSE)),reshape(Random_Hyperparameters,size(Random_MSE)),Random_MSE,alpha=0.65,color="#40d5bb")
 title("MSE for 20 Randomly Selected Hyper-Parameter Values")
 xlabel("Learning Rates")
 ylabel("Hyper-Parameters")
 zlabel("Mean Square Error")
 grid("on")
 show()
-
+#12a3b4 aqua
 
 
 
 #Bayesian Optimization Examples===================================================
 
 #Here are the points we can pick from in the Optimization
-
-LR_Test=linspace(a,b,100)
-HP_Test=linspace(c,d,100)
-
-#Here is the carteisan product of these written as a vector
-Test=gen_points([LR_Test,HP_Test])[1]
-
-
-
-
-
-#We first have to pick a random point to begin bayesian optimization:
-
-#currently starts with the midpoint, possibly randomise this:
-Bayesian_Points=[Test[Int(round(length(Test)/2))]]
-
-
-
-#Bayesian_Points is an vector of arrays where in each array first entry is LR second entry is Hyper-Parameters:
-
-
-#Define hyperparemeter functions:
-node_function=hyper_curry(Bayesian_Points[1][2])
-node_deriv=hyper_curry_deriv(Bayesian_Points[1][2])
-
-#Define Learning Rate:
-learning_rate=Bayesian_Points[1][1]
-
-
-#Run first train before Bayesian Optimization:
-Bayesian_MSE=[Train_Neural_Net_Loop(epochs,Layer_1,Layer_2,learning_rate,node_function,node_deriv)[3]]
-
-#Begin Bayesian Optimization:
-
-for k=2:N
-    D=[(Bayesian_Points[i],Bayesian_MSE[i]) for i=1:length(Bayesian_Points)]
-    mu, sigma, D=gaussian_process_chol(std_exp_square_ker,D,1e-6,Test)
-    println("Gaussian Process Complete","\r")
-    mu=reshape(mu,length(mu));
-    sigma=reshape(sigma,length(sigma))
-
-
-    new_point=findmin(mu-sigma)[2]
-
-    #Here we will need to change the number 2 to k 
-    Bayesian_Points=cat(1,Bayesian_Points,[Test[new_point]])
-
-    learning_rate=Bayesian_Points[k][1]
- 
-    node_function=hyper_curry(Bayesian_Points[k][2])
-
-    node_deriv=hyper_curry_deriv(Bayesian_Points[k][2])
-
-    value_to_be_appended=Train_Neural_Net_Loop(epochs,Layer_1,Layer_2,learning_rate,node_function,node_deriv)[3]
-
+@time begin
     
+    #Initialise Layers and params ==========================================
 
-    if value_to_be_appended !=Bayesian_MSE[k-1]
-        Bayesian_MSE=cat(1,Bayesian_MSE,[value_to_be_appended])
-        println("Epoch Complete")
-    else
-        println("Found Optimum on the ", k-1, " iteration of ", N, " iterations")
-        Bayesian_Points=Bayesian_Points[1:length(Bayesian_Points)-1]
+    LR_Test=linspace(a,b,50)
+    HP_Test=linspace(c,d,50)
+
+    #Here is the carteisan product of these written as a vector
+    Test=gen_points([LR_Test,HP_Test])[1]
+
+
+
+
+
+    #We first have to pick a random point to begin bayesian optimization:
+ 
+    #currently starts with the midpoint, possibly randomise this:
+    Bayesian_Points=[Test[Int(round(length(Test)/2))]]
+
+
+
+    #Bayesian_Points is an vector of arrays where in each array first entry is LR second entry is Hyper-Parameters:
+
+
+    #Define hyperparemeter functions:
+    node_function=hyper_curry(Bayesian_Points[1][2])
+    node_deriv=hyper_curry_deriv(Bayesian_Points[1][2])
+
+    #Define Learning Rate:
+    learning_rate=Bayesian_Points[1][1]
+
+
+    #Run first train before Bayesian Optimization:
+    Bayesian_MSE=[Train_Neural_Net_Loop(epochs,Layer_1,Layer_2,learning_rate,node_function,node_deriv)[3]]
+
+    #Begin Bayesian Optimization:
+
+    for k=2:N
+        D=[(Bayesian_Points[i],Bayesian_MSE[i]) for i=1:length(Bayesian_Points)]
+        mu, sigma, D=gaussian_process_chol(std_exp_square_ker,D,1e-6,Test)
+        # println("Gaussian Process Complete","\r")
+        mu=reshape(mu,length(mu));
+        sigma=reshape(sigma,length(sigma))
+
+
+        new_point=findmin(mu-sigma)[2]
+
+        #Here we will need to change the number 2 to k 
+        Bayesian_Points=cat(1,Bayesian_Points,[Test[new_point]])
+
+        learning_rate=Bayesian_Points[k][1]
+     
+        node_function=hyper_curry(Bayesian_Points[k][2])
+
+        node_deriv=hyper_curry_deriv(Bayesian_Points[k][2])
+
+        value_to_be_appended=Train_Neural_Net_Loop(epochs,Layer_1,Layer_2,learning_rate,node_function,node_deriv)[3]
+
         
-        break
+
+        if value_to_be_appended !=Bayesian_MSE[k-1]
+            Bayesian_MSE=cat(1,Bayesian_MSE,[value_to_be_appended])
+            println("Epoch Complete")
+        else
+            println("Found Optimum on the ", k-1, " iteration of ", N, " iterations")
+            Bayesian_Points=Bayesian_Points[1:length(Bayesian_Points)-1]
+            
+            break
+        end
+
     end
 
 end
-
-
 
 # Bayesian Plotting =========================================================
 
@@ -175,16 +180,15 @@ HP=[Bayesian_Points[i][2] for i=1:length(Bayesian_Points)]
 
 
 
-
 #Move this to the bottom
 println("Bayesian_Learning_Rates Training Complete")
 println("The minimum MSE by Bayesian Optimization was", minimum(Bayesian_MSE))
-println("The mininmum MSE by Random Selection was", minimum(Random_MSE))
+println("The minimum MSE by Random Selection was", minimum(Random_MSE))
 
 using PyPlot
 # fig = figure("pyplot_subplot_mixed",figsize=(7,7))
 # ax=axes()
-surf(LR,HP,Bayesian_MSE,alpha=0.7)
+surf(LR,HP,Bayesian_MSE,alpha=0.65,color="#40d5bb")
 
 title("MSE for Sigmoid Hyper-Parameters and Learning Rates Selected by BO")
 xlabel("Learning Rates")
@@ -193,37 +197,6 @@ zlabel("Mean Square Error")
 
 grid("off")
 show()
-
-
-
-
-using PyPlot
-# fig = figure("pyplot_subplot_mixed",figsize=(7,7))
-# ax=axes()
-
-surf(reshape(Random_Learning_Rates,size(Random_MSE)),reshape(Random_Hyperparameters,size(Random_MSE)),Random_MSE,alpha=0.3,label="Random Selection")
-surf(LR,HP,Bayesian_MSE,alpha=0.3,label="Bayesian Optimization")
-legend()
-
-
-title("MSE for Sigmoid Hyper-Parameters and Learning Rates Selected by BO")
-xlabel("Learning Rates")
-ylabel("Hyper-Parameters")
-zlabel("Mean Square Error")
-
-grid("off")
-show()
-
-
-
-
-
-""""
-For 100 range
-The minimum MSE by Bayesian Optimization was 0.1766613895128894
-The minimum MSE by Random Selection was 0.2931509389546021
-""""
-
 
 
 
