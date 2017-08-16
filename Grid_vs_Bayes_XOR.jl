@@ -25,7 +25,7 @@ Layer_1=uniform(0,1,2,2)
 
 Layer_2=uniform(0,1,2,1) 
 
-epoch_vec=linspace(10,1000,20)   # For the final report up this to 100 and leave for 10 minute to get smoothest graph
+epoch_vec=linspace(100,1000,10)   # For the final report up this to 100 and leave for 10 minute to get smoothest graph
 epoch_bayes_result=zeros(epoch_vec)
 epoch_random_result=zeros(epoch_vec)
 
@@ -55,6 +55,11 @@ Random_Hyperparameters=uniform(c,d,N,1)
 Random_Mat=cat(2,Random_Learning_Rates,Random_Hyperparameters)
 Random_MSE=zeros(N)
 
+timingsrand=zeros(length(epoch_vec))
+timingsbays=zeros(length(epoch_vec))
+convergence=zeros(length(epoch_vec))
+
+
 for p=1:length(epoch_vec)
 
         
@@ -71,7 +76,7 @@ for p=1:length(epoch_vec)
     #with LR_1 and hyperparemeter 1.
 
 
-
+    tic()
     for i=1:length(Random_Learning_Rates)
         node_function=hyper_curry(Random_Mat[i,2])
         node_deriv=hyper_curry_deriv(Random_Mat[i,2])
@@ -81,6 +86,9 @@ for p=1:length(epoch_vec)
     end
 
     println("Random Learning Rates Training Completed")
+    q=toc()
+    timingsrand[p]=q
+
 
 
 
@@ -92,8 +100,8 @@ for p=1:length(epoch_vec)
 
     #Here are the points we can pick from in the Optimization
 
-    LR_Test=linspace(a,b,75)
-    HP_Test=linspace(c,d,75)
+    LR_Test=linspace(a,b,40)
+    HP_Test=linspace(c,d,40)
 
     #Here is the carteisan product of these written as a vector
     Test=gen_points([LR_Test,HP_Test])[1]
@@ -124,7 +132,7 @@ for p=1:length(epoch_vec)
     Bayesian_MSE=[Train_Neural_Net_Loop(epochs,Layer_1,Layer_2,learning_rate,node_function,node_deriv)[3]]
 
     #Begin Bayesian Optimization:
-
+    tic()
     for k=2:N
         D=[(Bayesian_Points[i],Bayesian_MSE[i]) for i=1:length(Bayesian_Points)]
         mu, sigma, D=gaussian_process_chol(std_exp_square_ker,D,1e-6,Test)
@@ -151,16 +159,22 @@ for p=1:length(epoch_vec)
         if value_to_be_appended !=Bayesian_MSE[k-1]
             Bayesian_MSE=cat(1,Bayesian_MSE,[value_to_be_appended])
             println("Epoch Complete")
+            if k==N
+                convergence[p]=N
+            end
+
         else
             println("Found Optimum on the ", k-1, " iteration of ", N, " iterations")
             Bayesian_Points=Bayesian_Points[1:length(Bayesian_Points)-1]
+            convergence[p]=k-1
             
             break
         end
 
         
     end
-
+    q=toc()
+    timingsbays[p]=q
 
 
     # Bayesian Plotting =========================================================
@@ -181,8 +195,6 @@ for p=1:length(epoch_vec)
 
 
     println("completed cycle ",p, " out of overall cycle", length(epoch_vec))
-
-
 end
 
 
@@ -199,3 +211,25 @@ legend(loc="upper right",fancybox="true")
 grid("on")
 show()
 
+
+
+
+using PyPlot
+
+plot(epoch_vec,timingsrand,label="Random Timings")
+plot(epoch_vec,timingsbays, label="Bayesian Op Timings")
+title("Timings")
+xlabel("Epochs")
+ylabel("Time (s)")
+legend(loc="upper right",fancybox="true")
+grid("on")
+show()
+
+
+using PyPlot
+plot(epoch_vec,convergence)
+title("convergance")
+xlabel("Epochs")
+ylabel("convergance val")
+grid("on")
+show()

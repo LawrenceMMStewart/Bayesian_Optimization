@@ -83,7 +83,7 @@ using PyPlot
 ax=axes()
 
 surf(reshape(Random_Learning_Rates,size(Random_MSE)),reshape(Random_Hyperparameters,size(Random_MSE)),Random_MSE,alpha=0.65,color="#40d5bb")
-title("MSE for 20 Randomly Selected Hyper-Parameter Values")
+title("MSE for 20 Randomly Selected Parameter Values")
 xlabel("Learning Rate")
 ylabel("Hyper-Parameter")
 zlabel("Mean Square Error")
@@ -198,7 +198,7 @@ using PyPlot
 surf(LR,HP,Bayesian_MSE,alpha=0.65,color="#40d5bb")
 surf(planex,planey,planem,alpha=0.3,color="#aa231f")
 
-title("MSE -BO (six points)")
+title("MSE BO - (6 point convergance)")
 xlabel("Learning Rate")
 ylabel("Hyper-Parameter")
 zlabel("Mean Square Error")
