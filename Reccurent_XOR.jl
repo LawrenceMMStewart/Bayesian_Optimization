@@ -171,7 +171,7 @@ function Train_Reccurent_Net_Loop(epochs,Layer_1,Layer_2,recurrent_layer,learnin
             a_2=map(node_function,[seq[i]]*Layer_1+context_units_out*recurrent_layer)
             a_3=map(node_function,a_2*Layer_2)
             direct_error=a_3-seq[i+1]
-            MSE=0.5*sum(direct_error.*direct_error) #This is not actually the square error but the mean 
+            MSE=0.5*sum(direct_error.*direct_error) 
             context_units_out=map(node_function,a_2*ones(2,2))
 
             #This is the foward pass for an individual point
@@ -219,6 +219,7 @@ end
 #Test 1 ======================================================================================================
 
 #Here we run a temporal XOR example to show how the reccurent net learns with time:
+#We note here that this is the plotting the first and last epoch of the sequence for alpha=0.01 theta=1
 
 # #Run
 
@@ -246,10 +247,16 @@ end
 
 
 
+
+
+# println("The Varience for the first epoch is ", maximum(y0)-minimum(y0))
+# println("The Varience for the last epoch is ",maximum(yend)-minimum(yend))
+
+
 # using PyPlot
 
-# plot(xvals,y0,label="MSE of First Epoch",alpha=0.4)
-# plot(xvals,yend,label="MSE of Last Epoch",alpha=0.9)
+# plot(xvals,y0,label="MSE of First Epoch",alpha=0.4,color="#aa231f")
+# plot(xvals,yend,label="MSE of Last Epoch",alpha=0.9,color="#40d5bb")
 # title("MSE Plot For Each Term in XOR Sequence ")
 # xlabel(L"$n$")
 # ylabel(L"${XOR}_n$")
@@ -258,7 +265,7 @@ end
 # grid("off")
 # show()
 
-# #End run
+#End run
 
 # ========================================================================================================
 

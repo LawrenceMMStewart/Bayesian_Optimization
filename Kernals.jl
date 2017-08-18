@@ -1,5 +1,8 @@
 #linear_ker.jl
 
+
+srand(1234)
+
 """
 Compute the kernal, (linear) described 
 

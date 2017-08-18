@@ -1,3 +1,5 @@
+#Here will will run a similar file to Bayesian_Opt_RNN_XOR but instead we will only take the means of the deterministic values as the sequence develops
+
 #Bayesian_Opt_RNN_XOR.jl
 
 #Set the random seed:
@@ -14,7 +16,7 @@ Layer_1=uniform(0,1,1,2)
 Layer_2=uniform(0,1,2,1)
 recurrent_layer=uniform(0,1,2,2)
 
-Seq_Len=100
+Seq_Len=33
 epochs=100 #1000 doesnt demonstrate much as run time is longer
 
 
@@ -48,26 +50,66 @@ Random_Learning_Rates=uniform(a,b,N,1)
 Random_Hyperparameters=uniform(c,d,N,1)
 
 Random_Mat=cat(2,Random_Learning_Rates,Random_Hyperparameters)
-Random_Average_of_Temporal_Square_Errors=zeros(N)
+Random_Average_of_Deterministic_Terms=zeros(N)
 
+# Random_Varience=zeros(N)
 
-tic()
+inloop_rand_t=0
+
 for i=1:length(Random_Learning_Rates)
+    tic()
     node_function=hyper_curry(Random_Mat[i,2])
     node_deriv=hyper_curry_deriv(Random_Mat[i,2])
     learning_rate=Random_Mat[i,1]
 
     #Here P is the first epoch of the temporal and the last epoch of the temporal SE Values in a 1x2 matrix
     P=Train_Reccurent_Net_Loop(epochs,Layer_1,Layer_2,recurrent_layer,learning_rate,node_function,node_deriv,Seq_Len)
+ 
+ #   Random_Varience[i]=maximum(P[2])-minimum(P[2])
+ 
+    #Here we will only take the MSE average of the values that can be predicted,i.e every third term:
+    determ_vals=P[2][3:3:end]
 
-    Random_Average_of_Temporal_Square_Errors[i]=(1/length(P[2]))*sum(P[2])
+
+    Random_Average_of_Deterministic_Terms[i]=(1/length(determ_vals))*sum(determ_vals)
 
     #Random_MSE[i]=Train_Neural_Net_Loop(epochs,Layer_1,Layer_2,learning_rate,node_function,node_deriv)[3]
     println("Epoch Complete")
+    inloop_rand_t+=toc()
+
+
+    #plotting for below- may want to remove this 
+
+    if i==1
+        y0=P[1]
+        yend=P[2]
+        xvals=[i for i=1:length(y0)]
+
+
+
+
+
+        println("The Varience for the first epoch is ", maximum(y0)-minimum(y0))
+        println("The Varience for the last epoch is ",maximum(yend)-minimum(yend))
+
+
+        using PyPlot
+
+        plot(xvals,y0,label="MSE of First Epoch",alpha=0.3,color="#aa231f")
+        plot(xvals,yend,label="MSE of Last Epoch",alpha=0.8,color="#40d5bb")
+        title("MSE Plot For Each Term in XOR Sequence ")
+        # xlabel(L"$n$")
+        # ylabel(L"${XOR}_n$")
+        legend(loc="upper right",fancybox="true")
+        axis("tight")
+        grid("off")
+        show()
+    end
+
 end
 
 println("Random Learning Rates Training Completed")
-totaltimerand=toc()
+
 
 
 
@@ -79,7 +121,7 @@ using PyPlot
 # fig = figure("pyplot_subplot_mixed",figsize=(7,7))
 ax=axes()
 
-surf(reshape(Random_Learning_Rates,size(Random_Average_of_Temporal_Square_Errors)),reshape(Random_Hyperparameters,size(Random_Average_of_Temporal_Square_Errors)),Random_Average_of_Temporal_Square_Errors,alpha=0.65,color="#40d5bb")
+surf(reshape(Random_Learning_Rates,size(Random_Average_of_Deterministic_Terms)),reshape(Random_Hyperparameters,size(Random_Average_of_Deterministic_Terms)),Random_Average_of_Deterministic_Terms,alpha=0.7,color="#40d5bb")
 title("Average Temporal SE Plot for varied Sigmoid Hyper-Parameters and Learning Rates")
 xlabel("Learning Rates")
 ylabel("Hyper-Parameters")
@@ -122,7 +164,8 @@ learning_rate=Bayesian_Points[1][1]
 
 #Run first train before Bayesian Optimization:
 P=Train_Reccurent_Net_Loop(epochs,Layer_1,Layer_2,recurrent_layer,learning_rate,node_function,node_deriv,Seq_Len)
-Bayesian_Temporal_Means=[(1/length(P[2]))*sum(P[2])]
+determ_vals=P[2][3:3:end]
+Bayes_Average_of_Deterministic_Terms=[(1/length(determ_vals))*sum(determ_vals)]
 
 
 
@@ -134,9 +177,13 @@ sigma=zeros(number_of_points)
 
 
 
-tic()
+inloop_bayes_t=0
+
+#Bayes_Varience=zeros(N)
+
 for k=2:N
-    D=[(Bayesian_Points[i],Bayesian_Temporal_Means[i]) for i=1:length(Bayesian_Points)]
+    tic()
+    D=[(Bayesian_Points[i],Bayes_Average_of_Deterministic_Terms[i]) for i=1:length(Bayesian_Points)]
     mu, sigma, D=gaussian_process_chol(std_exp_square_ker,D,1e-6,Test)  #This line here has been changed to chol version of gaussian_process
     println("Gaussian Process", k, " Complete","\r")
     mu=reshape(mu,length(mu));
@@ -155,12 +202,44 @@ for k=2:N
     node_deriv=hyper_curry_deriv(Bayesian_Points[k][2])
 
     P=Train_Reccurent_Net_Loop(epochs,Layer_1,Layer_2,recurrent_layer,learning_rate,node_function,node_deriv,Seq_Len)
-    value_to_be_appended=(1/length(P[2]))*sum(P[2])
 
-    
+ #   Bayes_Varience[k]=maximum(P[2])-minimum(P[2])
 
-    if value_to_be_appended !=Bayesian_Temporal_Means[k-1]
-        Bayesian_Temporal_Means=cat(1,Bayesian_Temporal_Means,[value_to_be_appended])
+
+    determ_vals=P[2][3:3:end]
+    value_to_be_appended=(1/length(determ_vals))*sum(determ_vals)
+
+    inloop_bayes_t+=toc()
+
+    if k==N
+
+        y0=P[1]
+        yend=P[2]
+        xvals=[i for i=1:length(y0)]
+
+
+
+        println("The Varience for the first epoch is ", maximum(y0)-minimum(y0))
+        println("The Varience for the last epoch is ",maximum(yend)-minimum(yend))
+
+
+        using PyPlot
+
+        plot(xvals,y0,label="MSE of First Epoch",alpha=0.3,color="#aa231f")
+        plot(xvals,yend,label="MSE of Last Epoch",alpha=0.8,color="#40d5bb")
+        title("MSE Plot For Each Term in XOR Sequence ")
+        xlabel(L"$n$")
+        ylabel(L"${XOR}_n$")
+        legend(loc="upper right",fancybox="true")
+        axis("tight")
+        grid("off")
+        show()
+    end
+
+
+
+    if value_to_be_appended !=Bayes_Average_of_Deterministic_Terms[k-1]
+        Bayes_Average_of_Deterministic_Terms=cat(1,Bayes_Average_of_Deterministic_Terms,[value_to_be_appended])
         println("Epoch ", k, " Complete")
 
     else
@@ -168,14 +247,17 @@ for k=2:N
         Bayesian_Points=Bayesian_Points[1:length(Bayesian_Points)-1]
         break
     end
+    
+
+
 
 end
-totalbayestime=toc()
+
 
 
 println("Bayesian_Learning_Rates Training Complete")
-println("total time rand = ",totaltimerand)
-println("total time Bayes = ",totalbayestime)
+println("total time rand = ",inloop_rand_t)
+println("total time Bayes = ",inloop_bayes_t)
 
 # Bayesian Plotting =========================================================
 
@@ -189,19 +271,21 @@ HP=[Bayesian_Points[i][2] for i=1:length(Bayesian_Points)]
 
 
 #Move this to the bottom
-println("Minimum Average Square Error for Random Selection = ", minimum(Random_Average_of_Temporal_Square_Errors))
-println("Minimum Average Square Error for Bayesian Optimization = ", minimum(Bayesian_Temporal_Means))
-println("Maximum Average Square Error for Random Selection = ", maximum(Random_Average_of_Temporal_Square_Errors))
-println("Maximum Average Square Error for Bayesian Optimization = ", maximum(Bayesian_Temporal_Means))
+println("Minimum Average Square Error for Random Selection = ", minimum(Random_Average_of_Deterministic_Terms))
+println("Minimum Average Square Error for Bayesian Optimization = ", minimum(Bayes_Average_of_Deterministic_Terms))
 
-
+#println("The varience for the error of Random Selection is = ",Random_Varience[  findmin(Random_Average_of_Deterministic_Terms)[2]]  )
+#println("The varience for the error by Bayesian Optimization is = ",Bayes_Varience[ findmin(Bayes_Average_of_Deterministic_Terms)[2]] )
+println("The Minimum Average Square Error for Random Selection is found at epoch ",findmin(Random_Average_of_Deterministic_Terms)[2])
+println("The Minimum Average Square Error for Bayesian Optimization is found at epoch ",findmin(Bayes_Average_of_Deterministic_Terms)[2])
 
 
 
 using PyPlot
 # fig = figure("pyplot_subplot_mixed",figsize=(7,7))
 # ax=axes()
-scatter(LR,HP,Bayesian_Temporal_Means,alpha=0.65,color="#40d5bb")
+
+surf(LR,HP,Bayes_Average_of_Deterministic_Terms,alpha=0.65,color="#40d5bb")
 surf(LR,HP,mu+2*sigma,alpha=0.3) #This should be just mu not 2*mu
 surf(LR,HP,mu-2*sigma,alpha=0.3)
 
@@ -217,100 +301,6 @@ show()
 
 
 
-
-
-"""
-============================================== Results ==========================================
-
-
-
-_________ Experiment 1_____________________
-
-We will see how the error changes with various values First we will change 
-Seq_Len=100
-epochs=100
-N=10
-number_of_points=125
-
-Output---->
-Minimum Average Square Error for Random Selection = 0.1203530371912469
-Minimum Average Square Error for Bayesian Optimization = 0.11446107828879067
-Maximum Average Square Error for Random Selection = 0.13370180297876086
-Maximum Average Square Error for Bayesian Optimization = 0.12899905541674905
-
-
-We now change the value N to see what happens:
-============================================== 
-N=20
-
-Minimum Average Square Error for Random Selection = 0.11933513840710926
-Minimum Average Square Error for Bayesian Optimization = 0.11560440985781831
-Maximum Average Square Error for Random Selection = 0.1303499358710453
-Maximum Average Square Error for Bayesian Optimization = 0.131934570268544
-
-as we can see this has far less impact
-
-============================================== 
-N=5
-
-Minimum Average Square Error for Random Selection = 0.12435012501543988
-Minimum Average Square Error for Bayesian Optimization = 0.12383116207821351
-Maximum Average Square Error for Random Selection = 0.12989541500123994
-Maximum Average Square Error for Bayesian Optimization = 0.12737815821942364
-
-
-
-
-
-More random ones
-
-Seq_Len=100
-epochs=100
-N=100
-number_of_points=75
-
-see how this gaussian_process
-output-->
-
-Minimum Average Square Error for Random Selection = 0.11438941310870633
-Minimum Average Square Error for Bayesian Optimization = 0.11159015815940883
-Maximum Average Square Error for Random Selection = 0.13087656813355802
-Maximum Average Square Error for Bayesian Optimization = 0.1300878843237718
-
-
-==============================================
-
-
-Lets try a large sequence length
-
-
-Seq_Len=3000
-epochs=100
-N=15
-number_of_points=75
-
-Minimum Average Square Error for Random Selection = 0.12499468626485709
-Minimum Average Square Error for Bayesian Optimization = 0.12493735720265979
-Maximum Average Square Error for Random Selection = 0.12669453032837658
-Maximum Average Square Error for Bayesian Optimization = 0.12662348856300
-
-
-==============================================
-
-
-
-
-Seq_Len=100
-epochs=50
-N=15
-number_of_points=75
-
-Minimum Average Square Error for Random Selection = 0.1179449010241154
-Minimum Average Square Error for Bayesian Optimization = 0.12358375337646431
-Maximum Average Square Error for Random Selection = 0.1296091692096744
-Maximum Average Square Error for Bayesian Optimization = 0.13191330829847336
-
-"""
 
 
 
