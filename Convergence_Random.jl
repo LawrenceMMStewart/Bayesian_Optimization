@@ -32,7 +32,8 @@ d=1
 
 N=20  #dont need to change this from the file XOR_Timings as we know it converges within 6 attemps
 
-MSE_Threshold=0.177 #This is the MSE threshold for random to achieve 
+MSE_Threshold=0.185
+ #This is the MSE threshold for random to achieve 
 
 ThresholdN=10000 #We let the random search have 10,000 attempts and at that stage we stop it
 
@@ -169,7 +170,7 @@ using PyPlot
 ax=axes()
 
 surf(reshape(Random_Learning_Rates[1:1:length(Random_MSE)],size(Random_MSE)),reshape(Random_Hyperparameters[1:1:length(Random_MSE)],size(Random_MSE)),Random_MSE,alpha=0.65,color="#40d5bb")
-title("MSE for 20 Randomly Selected Parameter Values")
+title("MSE for Randomly Selected")
 xlabel("Learning Rate")
 ylabel("Hyper-Parameter")
 zlabel("Mean Square Error")
@@ -441,6 +442,21 @@ show()
 
 
 
+if minimum(Random_MSE)<minimum(Bayesian_MSE)
+    println(" =========Results=========
+        ")
+    println("Random selection with ",convergance_val, " attempts achieves", minimum(Random_MSE), "beating Bayesian Optimization which obtained ",minimum(Bayesian_MSE), " in 6 attempts")
+
+
+else
+
+
+    println(" =========Results=========
+    ")
+    println("Bayesian Optimization achieves  ", minimum(Bayesian_MSE)," with 6 attempts, beating Random Search's ",minimum(Random_MSE)," which was did not converge, (cutoff point was",ThresholdN, " searches.)")
+
+   
+end
 
 
 
@@ -456,8 +472,3 @@ legend()
 grid("on")
 show()
 
-if minimum(Random_MSE)<minimum(Bayesian_MSE)
-    println("Random selection with ",convergance_val, " attempts achieves", minimum(Random_MSE), "beating Bayesian Optimization which obtained ",minimum(Bayesian_MSE), " in 6 attempts")
-else
-    println("Bayesian Optimization achieves  ", minimum(Bayesian_MSE)," with 6 attempts, beating Random Search's ",minimum(Random_MSE)," which was obtained after ",convergance_val)
-end
