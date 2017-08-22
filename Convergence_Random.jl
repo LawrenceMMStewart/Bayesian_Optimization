@@ -32,10 +32,10 @@ d=1
 
 N=20  #dont need to change this from the file XOR_Timings as we know it converges within 6 attemps
 
-MSE_Threshold=0.185
+MSE_Threshold=0.177
  #This is the MSE threshold for random to achieve 
 
-ThresholdN=10000 #We let the random search have 10,000 attempts and at that stage we stop it
+ThresholdN=100000 #We let the random search have 10,000 attempts and at that stage we stop it
 
 #Curry the sigmoid functions:
 
@@ -449,12 +449,19 @@ if minimum(Random_MSE)<minimum(Bayesian_MSE)
 
 
 else
+    if minimum(Random_MSE)<=MSE_Threshold
+
+        println(" =========Results=========
+        ")
+        println("Bayesian Optimization achieves  ", minimum(Bayesian_MSE)," with 6 attempts, beating Random Search's ",minimum(Random_MSE)," which converged after ", convergance_val ," iterations.")
+
+    else
 
 
-    println(" =========Results=========
-    ")
-    println("Bayesian Optimization achieves  ", minimum(Bayesian_MSE)," with 6 attempts, beating Random Search's ",minimum(Random_MSE)," which was did not converge, (cutoff point was",ThresholdN, " searches.)")
-
+        println(" =========Results=========
+        ")
+        println("Bayesian Optimization achieves  ", minimum(Bayesian_MSE)," with 6 attempts, beating Random Search's ",minimum(Random_MSE)," which was did not converge, (cutoff point was",ThresholdN, " searches.)")
+    end
    
 end
 
@@ -464,11 +471,11 @@ using PyPlot
 # fig = figure("pyplot_subplot_mixed",figsize=(7,7))
 # ax=axes()
 plot(Bayesian_Times2,Bayesian_MSE,label="Bayesian Optimization",color="#40d5bb")
-plot(Random_Times,Random_MSE,label="Random Grid Search",color="#aa231f")
-title("Development of MSE with Time")
+plot(Random_Times,Random_MSE,label="Random Grid Search",color="#aa231f",alpha=0.3)
+title("Threshold MSE = 0.185")
 xlabel("Time (s)")
 ylabel("MSE")
-legend()
+legend(loc="upper right",fancybox="true")
 grid("on")
 show()
 
