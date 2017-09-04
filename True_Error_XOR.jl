@@ -1,3 +1,7 @@
+#This file samples far more random points in case the viewer wants to see a more complete picture of the networks error function:
+#Not very useful but sometimes it is good to know:
+
+
 #True_error_XOR
 
 

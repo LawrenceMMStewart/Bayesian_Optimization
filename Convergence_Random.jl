@@ -32,7 +32,7 @@ d=1
 
 N=20  #dont need to change this from the file XOR_Timings as we know it converges within 6 attemps
 
-MSE_Threshold=0.177
+MSE_Threshold=0.180
  #This is the MSE threshold for random to achieve 
 
 ThresholdN=100000 #We let the random search have 10,000 attempts and at that stage we stop it
@@ -60,7 +60,7 @@ Random_Times=[]
 Section 1 -- Run the random section one time to remove compiling timing error
 """
 
-
+z 
 
 # Random Learning Rates First run to remove compiler error!! ========================================
 
@@ -72,13 +72,13 @@ Random_Mat=cat(2,Random_Learning_Rates,Random_Hyperparameters)
 
 Random_MSE=ones(ThresholdN)
 
-
+time_so_far=0
 #Random_Mat conjoins Random_Learning_Rates and Random_Hyperparameters
 # Random_Mat is a Nx2 matrix where Random_Mat[1,:] is the first entry
 #with LR_1 and hyperparemeter 1.
 for i=1:length(Random_Learning_Rates)
     
- 
+    tic()
 
     node_function=hyper_curry(Random_Mat[i,2])
     node_deriv=hyper_curry_deriv(Random_Mat[i,2])
@@ -91,6 +91,11 @@ for i=1:length(Random_Learning_Rates)
 
         break
     end
+    time_so_far+=toc()
+    println("==========================")
+    println("Completed pre-run cycle ",i, " of ",length(Random_Learning_Rates))
+    println("==========================")
+    println("Current Time of pre-run elapsed ",time_so_far)
     
 
 
@@ -149,7 +154,10 @@ for i=1:length(Random_Learning_Rates)
     if i==length(Random_Learning_Rates)
         non_convergance+=1
     end
-
+    println("==========================")
+    println("Completed cycle ",i, " of ",length(Random_Learning_Rates))
+    println("==========================")
+    println("Current time elapsed ",q)
 end
 
 if non_convergance==0
@@ -374,6 +382,7 @@ for k=2:N
     Bayesian_Times[k]=q
 
 
+
 end
 
 Bayesian_Times2=Bayesian_Times[1:length(Bayesian_MSE)]
@@ -471,11 +480,16 @@ using PyPlot
 # fig = figure("pyplot_subplot_mixed",figsize=(7,7))
 # ax=axes()
 plot(Bayesian_Times2,Bayesian_MSE,label="Bayesian Optimization",color="#40d5bb")
-plot(Random_Times,Random_MSE,label="Random Grid Search",color="#aa231f",alpha=0.3)
-title("Threshold MSE = 0.185")
+plot(Random_Times,Random_MSE,label="Random Grid Search",color="#aa231f",alpha=0.45)
+title("Threshold MSE = 0.180")
 xlabel("Time (s)")
 ylabel("MSE")
 legend(loc="upper right",fancybox="true")
 grid("on")
 show()
+
+
+#0.190 = 2034 searches in time =
+#0.180=    searches in time  = 
+#BO =    seaches in time  = 
 

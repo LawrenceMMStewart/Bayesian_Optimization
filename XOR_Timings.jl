@@ -1,25 +1,26 @@
-#error vs time 2
-
-#Error vs time for Bayesian and Random Grid Search 
+#This file times random grid search vs Bayesian Optimization.
 
 
 include("XOR_MD.jl")
 include("Kernals.jl")
 include("gaussian_process.jl")
 
+#One may need to hash out the green note, depending on the version of Julia you run:
 
 
 #Set the random seed:
- #Seed for stalzer srand(1234)
+#Seed for stalzer srand(1234)
 
 """
 We will compare the effect of randomly selecting a learning rate and sigmoid 
 hyperparameter vs the use of Bayesian Optimization for finding the optimial values wrt the MSE. 
-Suppose we have limited computing time of 100000 epochs and that we have N tries to 
-minimise the MSE. Let us say that the learning rate is between a and b
+Suppose we have limited computing time of 1000 epochs and that we have N tries to 
+minimise the MSE. Let us say that the learning rate is between a and b and the node function hyperparameters are between c and d
 """
 
-#Initialise Layers and params ==========================================
+
+
+#Initialise Neural Network Layers and params ==========================================
 
 Layer_1=uniform(0,1,2,2) 
 
@@ -34,6 +35,9 @@ d=1
 
 N=20   
 
+
+
+
 #Curry the sigmoid functions:
 
 function hyper_curry(h)
@@ -46,15 +50,18 @@ end
 
 
 
+
+#preallocate the matrix of times for both Bayesian Optimization and Random Grid Search
 Bayesian_Times=zeros(N)
 Random_Times=zeros(N)
 
 
 
 
-"""
-Section 1 -- Run the random section one time to remove compiling timing error
-"""
+# """
+# Section 1 -- Run the random section one time to remove compiling timing error
+
+# """
 
 
 
@@ -70,10 +77,12 @@ Random_MSE=zeros(N)
 #Random_Mat conjoins Random_Learning_Rates and Random_Hyperparameters
 # Random_Mat is a Nx2 matrix where Random_Mat[1,:] is the first entry
 #with LR_1 and hyperparemeter 1.
-for i=1:length(Random_Learning_Rates)
-    
- 
 
+
+
+
+
+for i=1:length(Random_Learning_Rates)
     node_function=hyper_curry(Random_Mat[i,2])
     node_deriv=hyper_curry_deriv(Random_Mat[i,2])
     learning_rate=Random_Mat[i,1]
@@ -135,6 +144,10 @@ srand(123)
 
 
 
+
+#Plot the error in 3d for the randomly chosen points:
+
+
 using PyPlot
 # fig = figure("pyplot_subplot_mixed",figsize=(7,7))
 ax=axes()
@@ -142,7 +155,7 @@ ax=axes()
 surf(reshape(Random_Learning_Rates,size(Random_MSE)),reshape(Random_Hyperparameters,size(Random_MSE)),Random_MSE,alpha=0.65,color="#40d5bb")
 title("MSE for 20 Randomly Selected Parameter Values")
 xlabel("Learning Rate")
-ylabel("Hyper-Parameter")
+ylabel("Sigmoid Hyper-Parameter")
 zlabel("Mean Square Error")
 grid("on")
 show()
@@ -154,10 +167,15 @@ show()
 
 
 
+
+
 # """
 # Section 3 - Run Bayesian Opt one time to remove compiler problems
 # """
-#Initialise Layers and params ==========================================
+
+
+
+#Initialise Neural Network Layers and params ==========================================
 
 LR_Test=linspace(a,b,50)
 HP_Test=linspace(c,d,50)
@@ -182,18 +200,6 @@ HP_Test=linspace(c,d,50)
 
 #Here is the carteisan product of these written as a vector
 Test=gen_points([LR_Test,HP_Test])[1]
-
-
-
-
-
-
-
-
-
-
-#This is the break point
-
 
 
 
@@ -260,6 +266,8 @@ for k=2:N
 
 
 end
+
+
 
 
 
@@ -357,30 +365,25 @@ Bayesian_Times2=Bayesian_Times[1:length(Bayesian_MSE)]
 
 
 
-
-
-
-
-
-
-
-
-
-# Bayesian Plotting =========================================================
-
-
-
-
-
-
-
-
-
+#Print the results:
 
 println("Final Times for Random = ",Random_Times[end])
 println("Minimum MSE for Random =",minimum(Random_MSE))
 println("Final time for Bayes = ",Bayesian_Times2[end])
 println("Minimum MSE for Bayes =",minimum(Bayesian_MSE))
+
+
+
+
+
+
+
+
+
+
+#Plot both Bayesian and Random Timings =============================================
+
+
 using PyPlot
 # fig = figure("pyplot_subplot_mixed",figsize=(7,7))
 # ax=axes()
@@ -397,16 +400,16 @@ show()
 
 
 
+# Bayesian Error plotting 3D =========================================================
 
 LR=[Bayesian_Points[i][1] for i=1:length(Bayesian_Points)]
 HP=[Bayesian_Points[i][2] for i=1:length(Bayesian_Points)]
 
 
-
-
 planex=[0,0,1,1]
 planey=[0,1,0,1]
 planem=[minimum(Random_MSE),minimum(Random_MSE),minimum(Random_MSE),minimum(Random_MSE)]
+
 
 
 using PyPlot
@@ -417,7 +420,7 @@ surf(planex,planey,planem,alpha=0.3,color="#aa231f")
 
 title("MSE BO - (6 point convergance)")
 xlabel("Learning Rate")
-ylabel("Hyper-Parameter")
+ylabel("Sigmoid Hyper-Parameter")
 zlabel("Mean Square Error")
 grid("off")
 show()
