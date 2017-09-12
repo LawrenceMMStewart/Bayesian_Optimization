@@ -43,8 +43,14 @@ PLEASE CHECK IF THIS IS CORRECT! WORK OUT HOW TO MAKE PACKAGE DOWNLOADABLE
 
 # Contents 
 add here where each section is linked to a part of the paper
-* bullet 1 
-* bullet 2
+* Kernals.jl - A selection of kernal functions for Gaussian Processes
+* gaussian_process.jl - Code for a Gaussian Process (Niave) and a faster Cholesky method 
+* XOR.jl - A simple XOR neural network (for the 1D classic learning rate problem)
+* XOR_MD.jl - Generalised XOR with 2 dimensions (alpha and theta)
+* Tune_MD.jl - Bayesian Optimization with LCB utility function to tune the XOR NN over P
+* Grid_vs_Bayes_XOR.jl - Compares Random Grid Search with Bayesian Optimization
+* XOR_Timings.jl -Timings as found in the paper listed above
+* Metric_Strength_Test.jl -Experiment to see how strong the LCB metric performed for this NN (see paper)
 
 
 ## Future Work (Rename and talk about folder of uncompleted stuff)
