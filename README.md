@@ -17,3 +17,4 @@ also cite all improvements for example O(log^2(n)) GP's
 Also talk about Betty and Gordon Moore foundation and Mark Stalzer and Caltech
 
 Complete liscencing for the project -- i.e if yuo use the code please cite ....
+q

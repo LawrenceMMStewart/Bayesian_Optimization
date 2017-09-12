@@ -70,7 +70,7 @@ function gaussian_process_chol(ker,D,noise,xrange)
     # temp=cov_gen(ker,x,xrange)
     Lk=\(L,cov_gen(ker,x,xrange)) 
 
-    mu=[dot(Lk[:,i],(\(L,y))) for i=1:size(Lk)[2] ] #Here we have an error
+    mu=[dot(Lk[:,i],(\(L,y))) for i=1:size(Lk)[2] ] 
     K_diag=diag_cov_gen(ker,xrange)+ones(length(xrange))*noise
     s2=K_diag-[ sum( (Lk.*Lk)[:,i] ) for i=1:size(Lk)[2] ]  
     sigma=sqrt(s2) 

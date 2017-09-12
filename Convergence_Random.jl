@@ -7,6 +7,7 @@ include("gaussian_process.jl")
 
 
 
+
 #Set the random seed:
  #Seed for stalzer srand(1234)
 
@@ -20,7 +21,6 @@ minimise the MSE. Let us say that the learning rate is between a and b
 #Initialise Layers and params ==========================================
 
 Layer_1=uniform(0,1,2,2) 
-
 Layer_2=uniform(0,1,2,1) 
 
 epochs=1000   # was 1000 below, please change back
@@ -32,7 +32,7 @@ d=1
 
 N=20  #dont need to change this from the file XOR_Timings as we know it converges within 6 attemps
 
-MSE_Threshold=0.180
+MSE_Threshold=0.177
  #This is the MSE threshold for random to achieve 
 
 ThresholdN=100000 #We let the random search have 10,000 attempts and at that stage we stop it
@@ -489,7 +489,7 @@ grid("on")
 show()
 
 
-#0.190 = 2034 searches in time =
-#0.180=    searches in time  = 
-#BO =    seaches in time  = 
+#0.190 = 2034 searches in time =  121.77159729299996   Minimum MSE for Random =0.18607611627885998
+#0.180=  5685   searches in time  =  454.35400524799934
+#BO =    seaches in time  =  7562 (s) ( for prerun )
 
