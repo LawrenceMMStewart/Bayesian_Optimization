@@ -16,11 +16,6 @@ The research paper "Bayesian Optimization for Parameter Tuning of the XOR Neural
 
 
 
-## Getting Started
-
-Write something about how one could get the code or continue the project here:
-
-
 
 ### Installing
 
