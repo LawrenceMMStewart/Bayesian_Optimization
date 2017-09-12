@@ -10,7 +10,7 @@ Where <img src="https://github.com/LawrenceMMStewart/Bayesian_Optimization/blob/
 <img src="https://github.com/LawrenceMMStewart/Bayesian_Optimization/blob/master/Images/sigmoidnode.png" width="30"> is a sigmoid node with hyper-parameter (scale factor) h. 
 
 Bayesian Optimization as an algorithm (our chosen prior was a GP) can be breifly summarised as:
-<img src="https://github.com/LawrenceMMStewart/Bayesian_Optimization/blob/master/Images/BayesianOptimization.png" width="300">
+<img src="https://github.com/LawrenceMMStewart/Bayesian_Optimization/blob/master/Images/BayesianOptimization.png" width="500">
 
 
 The research paper "Bayesian Optimization for Parameter Tuning of the XOR Neural Network" can be found on arXiv at: INSERTLINKHERE.
