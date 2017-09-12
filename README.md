@@ -44,6 +44,8 @@ Give the example
 
 # Contents 
 add here where each section is linked to a part of the paper
+* bullet 1 
+* bullet 2
 
 
 ## Future Work (Rename and talk about folder of uncompleted stuff)

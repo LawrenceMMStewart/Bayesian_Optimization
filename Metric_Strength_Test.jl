@@ -35,8 +35,9 @@ N=20  #dont need to change this from the file XOR_Timings as we know it converge
 MSE_Threshold=0.177
  #This is the MSE threshold for random to achieve 
 
-ThresholdN=100000 #We let the random search have 10,000 attempts and at that stage we stop it
+ThresholdN=10000000  (#We origionally let the random search have 10,000 attempts and at that stage we stop it)
 
+#Curry the sigmoid functions:
 #Curry the sigmoid functions:
 
 function hyper_curry(h)
