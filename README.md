@@ -20,15 +20,16 @@ The research paper "Bayesian Optimization for Parameter Tuning of the XOR Neural
 
 Write something about how one could get the code or continue the project here:
 
-```
-Give examples
-```
+
 
 ### Installing
 
-A step by step series of examples that tell you have to get a development env running
+First ensure that you have julia installed:
 
-Say what the step will be
+```
+pip install julia 
+```
+If you have troubleshooting problems julia is available from https://julialang.org/downloads/. Once julia is installed you may use the package manager to download the code by entering:
 
 ```
 Pkg.clone("git://github.com/LawrenceMMStewart/Bayesian_Optimization")
