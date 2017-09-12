@@ -53,13 +53,11 @@ add here where each section is linked to a part of the paper
 * **Metric_Strength_Test.jl** -Experiment to see how strong the LCB metric performed for this NN (see paper)
 
 
-## Future Work (Rename and talk about folder of uncompleted stuff)
+## Future Work 
 
-THis is the fil
-A breif explanation of the temporal XOR and the neural network that is required for modellign this in the same way that elman  published in his paper- finding strucutre in time (cite this aws well) then have a folder with all this work dumped inside (which is the future work)
-
-
-also cite all improvements for example O(log^2(n)) GP's
+* Gaussian Processes can be made to O(nlog^2(n)) [3]
+* Utility function can be updated to IMGPO  [5] 
+* In the folder Builds/RNN's/Examples are the begginnigs of applying Bayesian Optimization to a reccurent neural net used to model the temporal XOR sequence. Hopefully this will be continued at some point in the near future.
 
 
 
@@ -100,11 +98,5 @@ The code is distributed under a Creative Commons Attribution 4.0 International P
 
 ## Acknowledgments
 
-This research is funded by the Caltech SURF program and the Gordon and Betty Moore Foundation through Grant GBMF4915 to the Caltech Cen- ter for Data-Driven Discovery. Many thanks to Mark Stalzer for supervising this project.
+This research is funded by the Caltech SURF program and the Gordon and Betty Moore Foundation through Grant GBMF4915 to the Caltech Center for Data-Driven Discovery. Many thanks to Mark Stalzer for supervising this project.
 
-
-
-ga README.md   
-
-gc -m "updated"
-gp
