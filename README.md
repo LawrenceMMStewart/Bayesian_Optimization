@@ -1,8 +1,15 @@
+
+
+
+
+
 The following Project investigates the use of Bayesian Optimzation to tune Parameters of the XOR Neural Network:
 
 
-Image should be below here: ![alt text](https://github.com/LawrenceMMStewart/Bayesian_Optimization/blob/master/Images/XOR.png)
-Hopefully should be a lot more smaller now
+Image should be below here: ![alt text](https://github.com/LawrenceMMStewart/Bayesian_Optimization/blob/master/Images/XOR.png =250 x250)
+
+
+
 Cite all papers used for the code:
 
 Link to Paper:
@@ -17,7 +24,9 @@ A breif explanation of the temporal XOR and the neural network that is required 
 also cite all improvements for example O(log^2(n)) GP's
 
 
-Also talk about Betty and Gordon Moore foundation and Mark Stalzer and Caltech
 
-Complete liscencing for the project -- i.e if yuo use the code please cite ....
-q
+
+The code is distributed under a Creative Commons Attribution 4.0 International Public License. If you use this code please attribute to L. Stewart and M.A. Stalzer Bayesian Optimization for Parameter Tuning of the XOR Neural Network, 2017.
+
+This research is funded by the Caltech SURF program and the Gordon and Betty Moore Foundation through Grant GBMF4915 to the Caltech Cen- ter for Data-Driven Discovery. Many thanks to Mark Stalzer for supervising this project.
+
