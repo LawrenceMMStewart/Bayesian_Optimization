@@ -1,4 +1,4 @@
-#Bayesian Optimization for Parameter Tuning of the XOR Neural Network
+# Bayesian Optimization for Parameter Tuning of the XOR Neural Network
 
 
 The following Project investigates the use of Bayesian Optimzation to tune Parameters of the XOR Neural Network see below:
@@ -11,7 +11,7 @@ The research paper "Bayesian Optimization for Parameter Tuning of the XOR Neural
 
 
 
-##Getting Started
+## Getting Started
 
 Write something about how one could get the code or continue the project here:
 
