@@ -1,6 +1,4 @@
-
-
-
+#Bayesian Optimization for Parameter Tuning of the XOR Neural Network
 
 
 The following Project investigates the use of Bayesian Optimzation to tune Parameters of the XOR Neural Network see below:
@@ -12,7 +10,32 @@ The research paper "Bayesian Optimization for Parameter Tuning of the XOR Neural
 
 
 
-Link to Paper:
+
+##Getting Started
+
+Write something about how one could get the code or continue the project here:
+
+```
+Give examples
+```
+
+### Installing
+
+A step by step series of examples that tell you have to get a development env running
+
+Say what the step will be
+
+```
+Give the example
+```
+
+
+
+
+
+
+
+
 
 Contents: where each section is linked to a part of the paper
 
@@ -56,9 +79,11 @@ Code utilizes theory from the following papers:
 
 
 
-
+## License
 
 The code is distributed under a Creative Commons Attribution 4.0 International Public License. If you use this code please attribute to L. Stewart and M.A. Stalzer Bayesian Optimization for Parameter Tuning of the XOR Neural Network, 2017.
+
+## Acknowledgments
 
 This research is funded by the Caltech SURF program and the Gordon and Betty Moore Foundation through Grant GBMF4915 to the Caltech Cen- ter for Data-Driven Discovery. Many thanks to Mark Stalzer for supervising this project.
 
