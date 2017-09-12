@@ -59,7 +59,7 @@ also cite all improvements for example O(log^2(n)) GP's
 
 
 
-
+## Papers used for code
 
 Code utilizes theory from the following papers:
 
