@@ -31,11 +31,9 @@ A step by step series of examples that tell you have to get a development env ru
 Say what the step will be
 
 ```
-Give the example
+Pkg.clone("git://github.com/LawrenceMMStewart/Bayesian_Optimization")
 ```
-
-
-
+PLEASE CHECK IF THIS IS CORRECT! WORK OUT HOW TO MAKE PACKAGE DOWNLOADABLE
 
 
 
