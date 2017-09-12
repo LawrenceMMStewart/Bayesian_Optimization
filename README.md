@@ -33,14 +33,23 @@ also cite all improvements for example O(log^2(n)) GP's
 Code utilizes theory from the following papers:
 
 [1] Jonas Mockus. Application of bayesian approach to numerical methods of global and stochastic optimization. Journal of Global Optimization, 4(4):347– 365, 1994.
+
 [2] Eric Brochu, Vlad M. Cora, and Nando de Freitas. A tutorial on bayesian optimization of expensive cost functions, with application to active user mod- eling and hierarchical reinforcement learning. CoRR, abs/1012.2599, 2010.
+
 [3] Carl Edward Rasmussen and Christopher KI Williams. Gaussian processes for machine learning, volume 1. MIT press Cambridge, 2006.
+
 [4] Sivaram Ambikasaran, Daniel Foreman-Mackey, Leslie Greengard, David W Hogg, and Michael O’Neil. Fast direct methods for gaussian processes. arXiv preprint arXiv:1403.6015, 2014.
+
 [5] Kenji Kawaguchi, Leslie Pack Kaelbling, and Tom ́as Lozano-P ́erez. Bayesian optimization with exponential convergence. In Advances in Neural Informa- tion Processing Systems, pages 2809–2817, 2015.
+
 [6] Gerhard J. Woeginger Alexander S. Kulikov. Computer science - theory and applications. 11th International Computer Science Symposium in Russia, CSR, 2016.
+
 [7] Jeffrey L Elman. Finding structure in time. Cognitive science, 14(2):179–211, 1990.
+
 [8] Robert A Jacobs. Increased rates of convergence through learning rate adap- tation. Neural networks, 1(4):295–307, 1988.
+
 [9] Federico Girosi, Michael Jones, and Tomaso Poggio. Regularization theory and neural networks architectures. Neural computation, 7(2):219–269, 1995.
+
 [10] Ziyu Wang, Frank Hutter, Masrour Zoghi, David Matheson, and Nando de Feitas. Bayesian optimization in a billion dimensions via random em- beddings. Journal of Artificial Intelligence Research, 55:361–387, 2016.
 8
 [11] Jasper Snoek, Oren Rippel, Kevin Swersky, Ryan Kiros, Nadathur Satish, Narayanan Sundaram, Mostofa Patwary, Mr Prabhat, and Ryan Adams. Scal- able bayesian optimization using deep neural networks. In International Con- ference on Machine Learning, pages 2171–2180, 2015.
