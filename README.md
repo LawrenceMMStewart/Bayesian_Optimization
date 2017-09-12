@@ -9,7 +9,9 @@ The following Project investigates the use of Bayesian Optimzation to tune Param
 Where <img src="https://github.com/LawrenceMMStewart/Bayesian_Optimization/blob/master/Images/inputnode.png" width="30"> is an input node
 <img src="https://github.com/LawrenceMMStewart/Bayesian_Optimization/blob/master/Images/sigmoidnode.png" width="30"> is a sigmoid node with hyper-parameter (scale factor) h. 
 
-Bayesian Optimization can br
+Bayesian Optimization as an algorithm (our chosen prior was a GP) can be breifly summarised as:
+<img src="https://github.com/LawrenceMMStewart/Bayesian_Optimization/blob/master/Images/BayesianOptimization.png" width="120">
+
 
 The research paper "Bayesian Optimization for Parameter Tuning of the XOR Neural Network" can be found on arXiv at: INSERTLINKHERE.
 
