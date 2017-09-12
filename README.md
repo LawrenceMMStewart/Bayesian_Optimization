@@ -7,7 +7,7 @@ The following Project investigates the use of Bayesian Optimzation to tune Param
 
 
 Image should be below here: ![alt text](https://github.com/LawrenceMMStewart/Bayesian_Optimization/blob/master/Images/XOR.png )
-<img src="https://github.com/favicon.ico" width="15">
+<img src="https://github.com/LawrenceMMStewart/Bayesian_Optimization/blob/master/Images/XOR.png" width="40">
 
 
 
@@ -31,3 +31,9 @@ The code is distributed under a Creative Commons Attribution 4.0 International P
 
 This research is funded by the Caltech SURF program and the Gordon and Betty Moore Foundation through Grant GBMF4915 to the Caltech Cen- ter for Data-Driven Discovery. Many thanks to Mark Stalzer for supervising this project.
 
+
+
+ga README.md   
+
+gc -m "updated"
+gp
