@@ -6,7 +6,8 @@
 The following Project investigates the use of Bayesian Optimzation to tune Parameters of the XOR Neural Network:
 
 
-Image should be below here: ![alt text](https://github.com/LawrenceMMStewart/Bayesian_Optimization/blob/master/Images/XOR.png =250 x250)
+Image should be below here: ![alt text](https://github.com/LawrenceMMStewart/Bayesian_Optimization/blob/master/Images/XOR.png )
+<img src="https://github.com/favicon.ico" width="48">
 
 
 
