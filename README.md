@@ -37,7 +37,7 @@ PLEASE CHECK IF THIS IS CORRECT! WORK OUT HOW TO MAKE PACKAGE DOWNLOADABLE
 
 
 # Contents 
-add here where each section is linked to a part of the paper
+
 * **Kernals.jl** - A selection of kernal functions for Gaussian Processes
 * **gaussian_process.jl** - Code for a Gaussian Process (Niave) and a faster Cholesky method 
 * **XOR.jl** - A simple XOR neural network (for the 1D classic learning rate problem)
