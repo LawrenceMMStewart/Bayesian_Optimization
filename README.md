@@ -37,10 +37,13 @@ Give the example
 
 
 
-Contents: where each section is linked to a part of the paper
+# Contents 
+add here where each section is linked to a part of the paper
 
 
-Future Work Code: THis is the fil
+## Future Work (Rename and talk about folder of uncompleted stuff)
+
+THis is the fil
 A breif explanation of the temporal XOR and the neural network that is required for modellign this in the same way that elman  published in his paper- finding strucutre in time (cite this aws well) then have a folder with all this work dumped inside (which is the future work)
 
 
