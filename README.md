@@ -30,7 +30,7 @@ Once julia will need to install the official Julia distributions package (for mo
 
 ```
 Pkg.add("Distributions.jl")
-
+```
 With both of the above installed, the final step is downloading the repository:
 
 ```
