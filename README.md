@@ -29,7 +29,7 @@ If you have troubleshooting problems julia is available from https://julialang.o
 ```
 Pkg.clone("git://github.com/LawrenceMMStewart/Bayesian_Optimization")
 ```
-PLEASE CHECK IF THIS IS CORRECT! WORK OUT HOW TO MAKE PACKAGE DOWNLOADABLE
+Testing 123 we may ne
 
 
 
