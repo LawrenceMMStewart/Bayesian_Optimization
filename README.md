@@ -24,12 +24,18 @@ First ensure that you have julia installed:
 ```
 pip install julia 
 ```
-If you have troubleshooting problems julia is available from https://julialang.org/downloads/. Once julia is installed you may use the package manager to download the code by entering:
+If you have troubleshooting problems julia is available from https://julialang.org/downloads/. 
+
+Once julia will need to install the official Julia distributions package (for more information see https://github.com/JuliaStats/Distributions.jl. 
+
+```
+Pkg.add("Distributions.jl")
+
+With both of the above installed, the final step is downloading the repository:
 
 ```
 Pkg.clone("git://github.com/LawrenceMMStewart/Bayesian_Optimization")
 ```
-Testing 123 we may ne
 
 
 
