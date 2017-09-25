@@ -1,4 +1,4 @@
-# Bayesian Optimization for Parameter Tuning of the XOR Neural Network <img src="https://github.com/LawrenceMMStewart/Bayesian_Optimization/blob/master/Images/caltech.png" width="55">
+# Bayesian Optimization for Parameter Tuning of the XOR Neural Network - California Insitute of Technology
 
 
 
