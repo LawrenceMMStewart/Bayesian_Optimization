@@ -11,7 +11,7 @@ Where <img src="https://github.com/LawrenceMMStewart/Bayesian_Optimization/blob/
 <img src="https://github.com/LawrenceMMStewart/Bayesian_Optimization/blob/master/Images/sigmoidnode.png" width="30"> is a sigmoid node with hyper-parameter (scale factor) h. 
 
 
-The research paper "Bayesian Optimization for Parameter Tuning of the XOR Neural Network" can be found on arXiv at: INSERTLINKHERE.
+The research paper "Bayesian Optimization for Parameter Tuning of the XOR Neural Network" can be found on arXiv at: https://arxiv.org/pdf/1709.07842.pdf
 
 
 
